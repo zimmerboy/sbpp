@@ -1,12 +1,23 @@
 {
-  "name": "Simcity Build Production Planner",
+  "name": "sbpp",
   "version": "0.0.1",
   "description": "Plan your factory and store production",
-  "repository": "https://github.com/zimmerboy/sbpp",
+  "author": "zimmerboy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zimmerboy/sbpp"
+  },
+  "bugs": {
+    "url": "https://github.com/zimmerboy/sbpp/issues"
+  },
+  "license": "MIT",
   "homepage": "https://zimmerboy.github.io/sbpp/",
   "private": true,
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4"
-  }
+  },
+  "keywords": [
+    "simcity"
+  ]
 }
