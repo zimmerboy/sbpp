@@ -163,7 +163,7 @@ gulp.task('scripts', ['scripts:stage'], function() {
   const dest = DIST+'/static/js';
   return gulp.src(STAGE+'/static/js/**/*.js')
   .pipe(changed(dest))
-//  .pipe(uglify())
+  // .pipe(uglify()) // Commented out because it can't uglify JavaScript ES6
   .pipe(gulp.dest(dest));
 });
 

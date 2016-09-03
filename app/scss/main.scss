@@ -1,0 +1,54 @@
+body {
+}
+
+div#producers {
+
+  ul > li {
+    cursor: pointer;
+  }
+
+}
+
+div#shopping-list {
+
+  ul > li {
+    cursor: -webkit-grab; cursor: -moz-grab;
+  }
+
+}
+
+div#work-list {
+
+}
+
+div#producers, div#shopping-list, div#work-list {
+  border: solid 1px #eeddee;
+  overflow-y: auto;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  ul > li {
+    margin: 2px 3px;
+  }
+
+}
+
+.card {
+    border: solid 1px #ddeeee;
+    background-color: #faffff;
+}
+
+img.delete {
+  cursor: pointer;
+}
+
+.sortable-placeholder {
+  border: solid 1px red;
+  background-color: yellow;
+  background-image: url('../static/images/triangle.png');
+  background-position: left;
+  background-repeat: no-repeat;
+}

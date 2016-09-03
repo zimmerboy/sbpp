@@ -1,0 +1,60 @@
+{% extends "base-layout.njk" %}
+
+{% block title %}My Title{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="row">
+
+    <div class="col-sm-4">
+
+      <div id="producers">
+      </div>
+
+    </div>
+
+    <div class="col-sm-4">
+
+      <div id="shopping-list">
+        <ul>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="col-sm-4">
+
+      <div id="work-list">
+        <ul>
+        </ul>
+      </div>
+
+    </div>
+
+  </div> <!-- row -->
+
+</div> <!-- .container -->
+
+<!-- TODO: Remove sortable files from source -->
+<!-- <script src="static/lib/jquery-sortable/jquery-sortable.min.js"></script> -->
+<script src="static/lib/jquery-ui/jquery-ui.min.js"></script>
+
+<script src="static/js/sc-data.js"></script>
+<script src="static/js/sbpp.js"></script>
+
+
+<!-- <script>
+
+  $(document).ready(function() {
+
+    $(function  () {
+      $('ol.sortable').sortable();
+    });
+
+  });
+
+</script>
+ -->
+{% endblock %}
