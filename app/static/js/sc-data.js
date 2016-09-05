@@ -358,6 +358,72 @@ const scData = {
             "producer": "Fashion Store",
             "duration": 150,
             "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Textiles", "amount": 2}, {"item": "Measuring Tape", "amount": 1}]
+        },
+
+        "Ice Cream Sandwich": {
+            "producer": "Fast Food Restaurant",
+            "duration": 14,
+            "requirements": [{"item": "Cream", "amount": 1}, {"item": "Bread Roll", "amount": 1}]
+        },
+
+        "Pizza": {
+            "producer": "Fast Food Restaurant",
+            "duration": 24,
+            "requirements": [{"item": "Flour Bag", "amount": 1}, {"item": "Cheese", "amount": 1}, {"item": "Beef", "amount": 1}]
+        },
+
+        "Burgers": {
+            "producer": "Fast Food Restaurant",
+            "duration": 35,
+            "requirements": [{"item": "Beef", "amount": 1}, {"item": "Bread Roll", "amount": 1}, {"item": "BBQ Grill", "amount": 1}]
+        },
+
+        "Cheese Fries": {
+            "producer": "Fast Food Restaurant",
+            "duration": 20,
+            "requirements": [{"item": "Vegetables", "amount": 1}, {"item": "Cheese", "amount": 1}]
+        },
+
+        "Lemonade Bottle": {
+            "producer": "Fast Food Restaurant",
+            "duration": 60,
+            "requirements": [{"item": "Sugar & Spices", "amount": 1}, {"item": "Glass", "amount": 1}, {"item": "Fruit and Berries", "amount": 1}]
+        },
+
+        "Popcorn": {
+            "producer": "Fast Food Restaurant",
+            "duration": 30,
+            "requirements": [{"item": "Corn", "amount": 2}, {"item": "Microwave Oven", "amount": 1}]
+        },
+
+        "BBQ Grill": {
+            "producer": "Home Appliances",
+            "duration": 165,
+            "requirements": [{"item": "Metal", "amount": 3}, {"item": "Cooking Utensil", "amount": 1}]
+        },
+
+        "Refrigerator": {
+            "producer": "Home Appliances",
+            "duration": 210,
+            "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Chemicals", "amount": 2}, {"item": "Electrical Components", "amount": 2}]
+        },
+
+        "Lighting System": {
+            "producer": "Home Appliances",
+            "duration": 105,
+            "requirements": [{"item": "Chemicals", "amount": 1}, {"item": "Glass", "amount": 1}, {"item": "Electrical Components", "amount": 1}]
+        },
+
+        "TV": {
+            "producer": "Home Appliances",
+            "duration": 150,
+            "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Glass", "amount": 1}, {"item": "Electrical Components", "amount": 2}]
+        },
+
+        "Microwave Oven": {
+            "producer": "Home Appliances",
+            "duration": 120,
+            "requirements": [{"item": "Metal", "amount": 4}, {"item": "Glass", "amount": 1}, {"item": "Electrical Components", "amount": 1}]
         }
 
     }

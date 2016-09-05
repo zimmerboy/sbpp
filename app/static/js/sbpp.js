@@ -1,123 +1,142 @@
 const $producers = $('#producers');
 
-const $wishList = $('#wish-list');
-const $wishListItems = $wishList.children('ul');
-
-const $todoList = $('#todo-list');
-const $todoListItems = $todoList.children('ul');
+const $queue = $('#queue');
+const $queueItems = $queue.children('ul');
 
 let idCounter = 0;
 
-// Handle when the user clicks the delete icon on the wish list card.
+// Handle when the user clicks the delete icon on the queue card.
 const handleClickDelete = function() {
     const $this = $(this);
 
     // Delete required items from todo list.
-    const $card = $this.parents('.card');
-    const id = $card.attr('id');
-    $('div[main-item-id="' + id + '"]', '#todo-list').each(function() {
-        const $item = $(this);
-        $item.parents('li').remove();
-    });
+    // const $card = $this.parents('.card');
+    // const id = $card.attr('id');
+    // $('div[main-item-id="' + id + '"]', '#todo-list').each(function() {
+    //     const $item = $(this);
+    //     $item.parents('li').remove();
+    // });
 
-    // Now delete the item from the wish list.
+    // Now delete the item from the queue.
     $this.parents('li').remove();
 };
 
+// Convert a string to alphanumeric and numbers only and hyphens.
+// e.g. Farmer's Market => FarmersMarket
+// Useful for generating id's.
+const encodeName = function(name) {
+    return name.replace(/[^0-9a-z\-]/gi, '')
+};
+
+// The actual item will be the last one in the list.
 /*
-<div id="wish-list-1" class="card">
-  <div class="item-name">Nails</div>
+<div id="GreenSmoothie-1-card" class="card">
+  <div id="Seeds-3" class="indent-2" parent="Vegetables-2">
+    Seeds
+  </div>
+  <div id="Seeds-4" class="indent-2" parent="Vegetables-2">
+    Seeds
+  </div>
+  <div id="Vegetables-2" class="indent-1" parent="GreenSmoothie-1">
+    Vegetables
+  </div>
+  ...
+  <div id="GreenSmoothie-1" class="indent-0" parent="">
+    Green Smoothie
+  </div>
 </div>
 */
-const createWishListItemCard = function(itemName) {
+const createQueueCards = function(itemList) {
 
-    idCounter++;
-
-    $card = $('<div/>', {
-        id: "wish-list-" + idCounter,
-        class: 'card',
-    })
-        .append($('<div>', {
-            class: "item-name",
-            text: itemName
-        }))
-        .append($('<input>', {
-            class: "comment"
-        }))
-        .append($('<img>', {
-            src: 'static/images/delete.png',
-            class: 'delete',
-            click: handleClickDelete
-        }));
-
-    return $card;
-};
-
-const createTodoListItemCard = function(data) {
-
-    const item = scData.items[data.mainItemName];
-
-    $card = $('<div/>', {
-        class: 'card',
-        "main-item-id": data.mainItemId,
-        text: data.mainItemName + " (" + data.mainItemId + ")"
+    const $queueCard = $('<div>', {
+        id: itemList[itemList.length - 1].id,
+        class: "card",
+        text: itemList[itemList.length - 1].itemName
     });
 
-    return $card;
+    for (let i = 0; i < itemList.length; i++) {
+        const item = itemList[i];
+        const $card = $('<div>', {
+            id: item.id,
+            class: "card indent-" + item.indentLevel,
+            text: item.itemName
+        });
+        $queueCard.append($card);
+    }
+
+    // $card = $('<div/>', {
+    //     id: "queue-" + idCounter++,
+    //     class: 'card',
+    // })
+    //     .append($('<div>', {
+    //         class: "item-name",
+    //         text: itemName
+    //     }))
+    //     .append($('<input>', {
+    //         class: "comment"
+    //     }))
+    //     .append($('<img>', {
+    //         src: 'static/images/delete.png',
+    //         class: 'delete',
+    //         click: handleClickDelete
+    //     }));
+
+    return $queueCard;
+
 };
 
+// const createTodoListItemCard = function(data) {
+//
+//     const item = scData.items[data.mainItemName];
+//
+//     $card = $('<div/>', {
+//         class: 'card',
+//         "main-item-id": data.mainItemId,
+//         text: data.mainItemName + " (" + data.mainItemId + ")"
+//     });
+//
+//     return $card;
+// };
+
 const scrollDivToBottom = function($div) {
-    const height = $wishList[0].scrollHeight;
+    const height = $queue[0].scrollHeight;
     $div.stop().animate({ scrollTop: height }, 1000);
+};
+
+// item1 and item2 are strings. e.g. "Metal"
+const itemComparator = function(item1, item2) {
+    const i1 = scData.items[item1];
+    const i2 = scData.items[item2];
+    const p1Index = Object.keys(scData.producers).indexOf(i1.producer);
+    const p2Index = Object.keys(scData.producers).indexOf(i2.producer);
+    // If the producers are different, then that is sufficient to sort.
+    if (p1Index !== p2Index) {
+        return p1Index - p2Index;
+    }
+    const i1Index = Object.keys(scData.items).indexOf(item1);
+    const i2Index = Object.keys(scData.items).indexOf(item2);
+    return i1Index - i2Index;
 };
 
 // Recursively add itemName and its dependencies to itemList.
 // Recursively add dependent items to todo list, including any dependent items.
-const addItemToTodoList = function(itemName, itemList) {
-    // Add the required items.
-    for (const requirement of scData.items[itemName].requirements) {
-        // console.log('  '+requirement.item+' ('+requirement.amount+')');
+const addItemToQueueList = function(queueItem) {
+    // Add the required items, if it has any.
+    let itemList = [];
+    for (const requirement of scData.items[queueItem.itemName].requirements) {
         for (let i = 0; i < requirement.amount; i++) {
-            itemList = addItemToTodoList(requirement.item, itemList);
-        }
-    }
-    itemList.push(itemName);
-    return itemList;
-};
-
-// Add item to todo list, including any dependent items.
-const addItemToTodoList2 = function($wishListCard) {
-    const $mainItemName = $wishListCard.find('.item-name');
-    const mainItemId = $wishListCard.attr('id');
-    const mainItemName = $mainItemName.text();
-
-    // Add the required items.
-    for (const requirement of scData.items[mainItemName].requirements) {
-        for (let i = 0; i < requirement.amount; i++) {
-            const cardData = {
-                "mainItemName": requirement.item,
-                "mainItemId": mainItemId,
-                "amount": requirement.amount
+            const qi = {
+                itemName: requirement.item,
+                id: encodeName(requirement.item + '-' + idCounter++),
+                parent: queueItem.id,
+                indentLevel: queueItem.indentLevel + 1
             };
-            const $todoListCard = createTodoListItemCard(cardData);
-            $todoListItems.append($('<li>')
-                .append($todoListCard)
-            );
+            itemList = itemList.concat(addItemToQueueList(qi));
         }
     }
-
-    // Add the item itself.
-    const cardData = {
-        "mainItemName": mainItemName,
-        "mainItemId": mainItemId,
-        "amount": 1
-    };
-    const $todoListCard = createTodoListItemCard(cardData);
-    $todoListItems.append($('<li>')
-        .append($todoListCard)
-    );
-
-    scrollDivToBottom($todoList);
+    // Then add the item itself.
+    itemList = itemList.concat(queueItem);
+    return itemList;
 };
 
 // React when the user clicks an item in the producer list.
@@ -125,20 +144,28 @@ const handleClickProducerItem = function() {
     $this = $(this);
     const itemName = $this.text();
 
-    // Add the item that was clicked to the wish list.
-    const $wishListCard = createWishListItemCard(itemName);
-    $wishListItems.append($('<li>')
-        .append($wishListCard)
-    );
-    scrollDivToBottom($wishList);
-
-    // Add the item and its dependencies to the todo list.
-    let itemList = addItemToTodoList(itemName, []);
+    // Build up the item list, which includes the item itself plus dependencies.
+    const queueItem = {
+        itemName: itemName,
+        id: encodeName(itemName + '-' + idCounter++),
+        parent: null,
+        indentLevel: 0
+    };
+    const itemList = addItemToQueueList(queueItem);
     console.log(itemList);
+    // console.log(item
+    // The actual item will be the last one in the list.List.sort(itemComparator));
     // $todoListItems.append($('<li>', {
     //     text: $this.text()
     // }));
-    // scrollDivToBottom($todoList);
+
+    // Add the item that was clicked to the queue.
+    const $queueCards = createQueueCards(itemList);
+    $queueItems.append($('<li>')
+        .append($queueCards)
+    );
+
+    scrollDivToBottom($queue);
 };
 
 // Create the items for the given producer on the screen.
@@ -181,30 +208,30 @@ const initProducers = function() {
     }
 };
 
-// If a wish list item was moved, then move its dependent items
+// If a queue item was moved, then move its dependent items
 // in the todo list, too.
-const reorderTodoList = function($mainItem) {
-    const $mainCard = $mainItem.find('.card');
-    const mainItemId = $mainCard.attr('id');
-    console.log('id=' + mainItemId + ', index=' + $mainItem.index());
-
-    // If we're not the first item, then find the previous one.
-    if ($mainItem.index() !== 0) {
-        const $prevItem = $wishListItems.children().eq($mainItem.index() - 1);
-        console.log('prev=' + $prevItem.find('.card').attr('id'));
-    }
-    $wishListItems.children().each(function() {
-        const $this = $(this);
-        const $card = $this.find('.card');
-        const itemId = $card.attr('id');
-        console.log(itemId + ', index=' + $this.index());
-    });
-    // }
-};
+// const reorderTodoList = function($mainItem) {
+//     const $mainCard = $mainItem.find('.card');
+//     const mainItemId = $mainCard.attr('id');
+//     console.log('id=' + mainItemId + ', index=' + $mainItem.index());
+//
+//     // If we're not the first item, then find the previous one.
+//     if ($mainItem.index() !== 0) {
+//         const $prevItem = $queueItems.children().eq($mainItem.index() - 1);
+//         console.log('prev=' + $prevItem.find('.card').attr('id'));
+//     }
+//     $queueItems.children().each(function() {
+//         const $this = $(this);
+//         const $card = $this.find('.card');
+//         const itemId = $card.attr('id');
+//         console.log(itemId + ', index=' + $this.index());
+//     });
+//     // }
+// };
 
 // TODO: Rename this function to something more meaningful.
 const initDrag = function() {
-    $wishList.sortable({
+    $queue.sortable({
         items: "li",
         placeholder: "sortable-placeholder",
         revert: 100,
@@ -214,8 +241,8 @@ const initDrag = function() {
         // cursorAt: { left: 5 }
         stop: function( event, ui ) {
             u = ui;
-            console.log("stop");
-            reorderTodoList(ui.item);
+            console.log("stop event");
+            // reorderTodoList(ui.item);
         }
         // beforeStop: function( event, ui ) {
         //     p = ui.position;
@@ -235,15 +262,15 @@ const initDrag = function() {
         //    }
         // }
     });
-    $wishList.disableSelection();
+    $queue.disableSelection();
 };
 
 const handleWindowResize = function() {
     const outerMargin = 46;
     const height = $(window).outerHeight() - outerMargin;
-    $producers.css('height', height + 'px');
-    $wishList.css('height', height + 'px');
-    $todoList.css('height', height + 'px');
+    $('div.area').css('height', height + 'px');
+    // $producers.css('height', height + 'px');
+    // $queue.css('height', height + 'px');
 };
 
 $(document).ready(function() {

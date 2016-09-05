@@ -1,27 +1,8 @@
 body {
+  font-size: 10px;
 }
 
-div#producers {
-
-  ul > li {
-    cursor: pointer;
-  }
-
-}
-
-div#wish-list {
-
-  ul > li {
-    cursor: -webkit-grab; cursor: -moz-grab;
-  }
-
-}
-
-div#todo-list {
-
-}
-
-div#producers, div#wish-list, div#todo-list {
+div.area {
   border: solid 1px #eeddee;
   overflow-y: auto;
 
@@ -37,12 +18,30 @@ div#producers, div#wish-list, div#todo-list {
   ul > li {
     margin: 2px 3px;
   }
+}
+
+.nopadding {
+  padding: 0;
+}
+
+div#producers {
+
+  ul > li {
+    cursor: pointer;
+  }
 
 }
 
-.card {
-    border: solid 1px #ddeeee;
-    background-color: #faffff;
+div#queue {
+
+  ul > li {
+    cursor: -webkit-grab; cursor: -moz-grab;
+  }
+
+}
+
+div#todo-list {
+
 }
 
 img.delete {
@@ -55,4 +54,25 @@ img.delete {
   background-image: url('../static/images/triangle.png');
   background-position: left;
   background-repeat: no-repeat;
+}
+
+.card {
+    border: solid 1px #ddeeee;
+    background-color: #faffff;
+}
+
+.indent-0 {
+  margin-left: 10px;
+}
+.indent-1 {
+  margin-left: 20px;
+}
+.indent-2 {
+  margin-left: 30px;
+}
+.indent-3 {
+  margin-left: 40px;
+}
+.indent-4 {
+  margin-left: 50px;
 }
