@@ -9,7 +9,7 @@ div#producers {
 
 }
 
-div#shopping-list {
+div#wish-list {
 
   ul > li {
     cursor: -webkit-grab; cursor: -moz-grab;
@@ -17,13 +17,17 @@ div#shopping-list {
 
 }
 
-div#work-list {
+div#todo-list {
 
 }
 
-div#producers, div#shopping-list, div#work-list {
+div#producers, div#wish-list, div#todo-list {
   border: solid 1px #eeddee;
   overflow-y: auto;
+
+  & > p {
+    margin-bottom: 0;
+  }
 
   ul {
     list-style-type: none;
