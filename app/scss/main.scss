@@ -52,9 +52,14 @@ div#shopping-list {
   background-color: #faffff;
   margin: 2px;
   padding: 1px;
+
+  &:first-of-type {
+    // Prevent jumping when the related button is pressed
+    margin-top: 1px;
+  }
 }
 
-div.show-related {
+div.related-but {
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -65,7 +70,7 @@ div.show-related {
   border: 1px solid #dedede;
 }
 
-div.show-delete {
+div.delete-but {
   display: inline-block;
   width: 16px;
   height: 16px;

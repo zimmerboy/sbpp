@@ -130,9 +130,13 @@ const createWorkCard = function(item, $id, $parentId, $shoppingListParentId) {
         text: item.name
     }))
     .append($('<div>', {
-        class: "show-related"
+        class: "related-but"
     })
-        .click(handleClickRelated));
+        .click(handleClickRelated))
+    .append($('<div>', {
+        class: "item-name",
+        text: $id
+    }));
 
     return $card;
 };
@@ -194,11 +198,11 @@ const handleClickProducerItem = function() {
         text: item.name
     }))
     .append($('<div>', {
-        class: "show-related"
+        class: "related-but"
     })
     .click(handleClickRelated))
     .append($('<div>', {
-        class: "show-delete",
+        class: "delete-but",
     })
     .click(handleClickDelete));
 
@@ -275,39 +279,42 @@ const reorderShoppingList = function($item) {
     if ($item.index() === 0) {
         // $item was moved to the first element.
         $('.work-list').each(function() {
-            const $this = $(this)
-            const $producerId = $this.attr('id')
-            const $firstItem = $this.children('div.card').first();
+            const $producerList = $(this)
+            const $producerId = $producerList.attr('id')
+            const $firstItem = $producerList.children('div.card').first();
+            // If there are no other items, then nothing to do.
             if ($firstItem.length === 0) {
                 return;
             }
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
+            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $producerList);
             $itemToMove.insertBefore($firstItem);
         });
     } else if ($item.index() === $shoppingList.children('div.card').length - 1) {
         // $item was moved to the last element.
         $('.work-list').each(function() {
-            const $this = $(this)
-            const $producerId = $this.attr('id')
-            const $lastItem = $this.children('div.card').last();
+            const $producerList = $(this)
+            const $producerId = $producerList.attr('id')
+            const $lastItem = $producerList.children('div.card').last();
+            // If there are no other items, then nothing to do.
             if ($lastItem.length === 0) {
                 return;
             }
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
+            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $producerList);
             $itemToMove.insertAfter($lastItem);
         });
     } else {
         // $item was moved to somewhere in between. It must have at least one
         // item above it and at least one item below it.
         $('.work-list').each(function() {
-            const $this = $(this)
-            const $producerId = $this.attr('id')
+            const $producerList = $(this)
+            const $producerId = $producerList.attr('id')
             const $nextShoppingListItem = $item.next();
-            const $nextItem = $this.children('div.card[shoppinglistparentid="'+$nextShoppingListItem.attr('id')+'"]').first();
+            const $nextItem = $producerList.children('div.card[shoppinglistparentid="'+$nextShoppingListItem.attr('id')+'"]').first();
+            // If there are no other items, then nothing to do.
             if ($nextItem.length === 0) {
                 return;
             }
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
+            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $producerList);
             $itemToMove.insertBefore($nextItem);
         });
     }
@@ -321,11 +328,25 @@ const initDrag = function() {
         revert: 100,
         cursor: "-webkit-grabbing",
         forcePlaceholderSize: true,
-        cancel: "input,textarea,button,select,option,div.show-related,div.delete",
+        cancel: "input,textarea,button,select,option,div.related-but,div.delete-but",
         // axis: "y",
         // cursorAt: { left: 5 }
-        stop: function( event, ui ) {
-            reorderShoppingList(ui.item);
+        start: function(event, ui) {
+            // creates a temporary attribute on the element with the old index
+            $(this).attr('data-previndex', ui.item.index());
+        },
+        update: function(e, ui) {
+            // gets the new and old index then removes the temporary attribute
+            var newIndex = ui.item.index();
+            var oldIndex = $(this).attr('data-previndex');
+            $(this).removeAttr('data-previndex');
+            // Only reorder if the item actually moved.
+            if (newIndex !== oldIndex) {
+                reorderShoppingList(ui.item);
+            }
+        },
+        stop: function(event, ui) {
+            // reorderShoppingList(ui.item);
         }
     });
     $shoppingList.disableSelection();
