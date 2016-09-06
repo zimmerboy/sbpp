@@ -2,21 +2,20 @@ body {
   font-size: 10px;
 }
 
+div.main {
+  margin-left: 2px;
+  margin-right: 2px;
+
+}
+
 div.area {
   border: solid 1px #eeddee;
   overflow-y: auto;
+  margin-left: 1px;
+  margin-right: 1px;
 
   & > p {
     margin-bottom: 0;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  ul > li {
-    margin: 2px 3px;
   }
 }
 
@@ -26,7 +25,15 @@ div.area {
 
 div#producers {
 
-  ul > li {
+  .producer {
+    margin-top: 10px;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  div.card {
     cursor: pointer;
   }
 
@@ -34,15 +41,37 @@ div#producers {
 
 div#shopping-list {
 
-  ul > li {
+  div.card {
     cursor: -webkit-grab; cursor: -moz-grab;
   }
 
 }
 
-div.show-related, div.delete {
+.card {
+  border: solid 1px #ddeeee;
+  background-color: #faffff;
+  margin: 2px;
+  padding: 1px;
+}
+
+div.show-related {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
-  background-color: #fafafa;
+  background-image: url('../static/images/related.png');
+  background-repeat: no-repeat;
+  background-position: right;
+  border: 1px solid #dedede;
+}
+
+div.show-delete {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background-image: url('../static/images/delete.png');
+  background-repeat: no-repeat;
 }
 
 .sortable-placeholder {
@@ -53,12 +82,27 @@ div.show-related, div.delete {
   background-repeat: no-repeat;
 }
 
-.card {
-    border: solid 1px #ddeeee;
-    background-color: #faffff;
+.related {
+  border: solid 1px green;
+  background-color: lighten(green, 70);
 }
 
-.related {
-  border: solid 1px red;
-  background-color: pink;
+$base-border-color: #563272;
+$base-bg-color: lighten(#E3DAEA, 0);
+
+.required-for {
+  border: solid 1px $base-border-color;
+  background-color: $base-bg-color;
+}
+
+.required-by {
+  border: dashed 1px $base-border-color;
+  background-color: $base-bg-color;
+}
+
+.required-item {
+  border: solid 2px $base-border-color;
+  background-color: darken($base-bg-color, 10);
+  margin: 0;
+  padding: 0 2px;
 }

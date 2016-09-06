@@ -1,7 +1,12 @@
-const $producers = $('#producers');
+// TODO: When clicking related, show required for and required by differently
+// TODO: When deleting, prompt for Y/N
+// TODO: Add offline storage
+// TODO: Add multiple cities
+// TODO: After dragging shopping list item, highlight/animate related cards briefly
+// TODO: Checkbox for item done
 
+const $producers = $('#producers');
 const $shoppingList = $('#shopping-list');
-const $shoppingListItems = $shoppingList.children('ul');
 
 let idCounter = 1;
 
@@ -22,23 +27,6 @@ const createShoppingListCards = function(itemList) {
         });
         $shoppingListCard.append($card);
     }
-
-    // $card = $('<div/>', {
-    //     id: "shoppingList-" + idCounter++,
-    //     class: 'card',
-    // })
-    //     .append($('<div>', {
-    //         class: "item-name",
-    //         text: itemName
-    //     }))
-    //     .append($('<input>', {
-    //         class: "comment"
-    //     }))
-    //     .append($('<img>', {
-    //         src: 'static/images/delete.png',
-    //         class: 'delete',
-    //         click: handleClickDelete
-    //     }));
 
     return $shoppingListCard;
 
@@ -77,29 +65,49 @@ const itemComparator = function(item1, item2) {
     return i1Index - i2Index;
 };
 
+
+// Add required-for class to this item and all ancestor (required) items
+const addRequiredFor = function($item) {
+    $id = $item.attr('id');
+
+    // Find each item required for this one
+    $('div.card[parentid='+$id+']').each(function() {
+        const $this = $(this)
+        addRequiredFor($this);
+    })
+
+    $item.addClass('required-for');
+};
+
+// Add required-by class to this item and parent (required by) items
+const addRequiredBy = function($item) {
+    $parentid = $item.attr('parentid');
+
+    // Find each item required for this one
+    $('div.card[id='+$parentid+']').each(function() {
+        const $this = $(this)
+        addRequiredBy($this);
+    })
+
+    $item.addClass('required-by');
+};
+
 const handleClickRelated = function(event) {
-    // Check if this is a shopping list card or work card.
     const $this = $(this);
     const $card = $this.parents('.card');
-    let $shoppingListParentId = $card.attr('shoppinglistparentid');
-    let $shoppingListParent;
-    if (typeof($shoppingListParentId) === 'undefined') {
-        $shoppingListParentId = $card.attr('id');
-        $shoppingListParent = $card;
-    } else {
-        $shoppingListParent = $('div.card[id="'+$shoppingListParentId+'"');
-    }
 
-    // Toggle showing related
-    if ($shoppingListParent.hasClass('related')) {
-        $shoppingListParent.removeClass('related');
-        $('div.card[shoppinglistparentid="'+$shoppingListParentId+'"').removeClass('related');
-    } else {
-        // Remove the class from any other items in case the user clicked a different item this time.
-        $('.related').removeClass('related');
-
-        $shoppingListParent.addClass('related');
-        $('div.card[shoppinglistparentid="'+$shoppingListParentId+'"').addClass('related');
+    // Check if we're turning it on or off.
+    // required-item is the item that was clicked
+    const hasClass = $card.hasClass('required-item');
+    $('.required-for').removeClass('required-for');
+    $('.required-by').removeClass('required-by');
+    $('.required-item').removeClass('required-item');
+    if (!hasClass) {
+        addRequiredFor($card);
+        addRequiredBy($card);
+        $card.removeClass('required-for');
+        $card.removeClass('required-by  ');
+        $card.addClass('required-item');
     }
 };
 
@@ -117,19 +125,14 @@ const createWorkCard = function(item, $id, $parentId, $shoppingListParentId) {
         parentid: $parentId,
         shoppinglistparentid: $shoppingListParentId
     })
-        .append($('<div>', {
-            class: "item-name",
-            text: item.name
-        }))
-        .append($('<div>', {
-            class: "show-related",
-            text: "Related"
-        })
-            .click(handleClickRelated))
-        .append($('<div>', {
-            class: "item-name",
-            text: $id
-        }));
+    .append($('<div>', {
+        class: "item-name",
+        text: item.name
+    }))
+    .append($('<div>', {
+        class: "show-related"
+    })
+        .click(handleClickRelated));
 
     return $card;
 };
@@ -155,10 +158,9 @@ const addItemToShoppingList = function(item, $parentId, $shoppingListParentId) {
     const producerName = item.producer;
     const producer = scData.producers[producerName];
     // Then add the item itself.
-    const $producer = $('#' + producer.id + ' > ul');
+    const $producer = $('#' + producer.id);
     const $card = createWorkCard(item, $id, $parentId, $shoppingListParentId);
-    $producer.append($('<li>')
-        .append($card));
+    $producer.append($card);
 };
 
 // Handle when the user clicks the delete icon on the shopping list card.
@@ -167,8 +169,8 @@ const handleClickDelete = function() {
     const $card = $this.parents('.card');
     const $shoppingListParentId = $card.attr('id');
 
-    $('div.card[shoppinglistparentid="'+$shoppingListParentId+'"').parent('li').remove();
-    $card.parent('li').remove();
+    $('div.card[shoppinglistparentid="'+$shoppingListParentId+'"').remove();
+    $card.remove();
 
 };
 
@@ -178,61 +180,41 @@ const handleClickProducerItem = function() {
     const item = scData.items[$this.text()];
 
     // Build up the item list, which includes the item itself plus dependencies.
-    // const shoppingListItem = {
-    //     itemName: itemName,
-    //     id: encodeName(itemName + '-' + idCounter++),
-    //     parent: null,
-    //     indentLevel: 0,
-    //     producer: "Safeway"
-    // };
     const $id = 'sl-' + item.id + '-' + idCounter++;
     addItemToShoppingList(item, $id, $id);
-    // console.log(itemList);
-    // console.log(item
-    // The actual item will be the last one in the list.List.sort(itemComparator));
-    // $todoListItems.append($('<li>', {
-    //     text: $this.text()
-    // }));
 
     // Add the item that was clicked to the shoppingList.
     // const $shoppingListCards = createShoppingCards(itemList);
     const $card = $('<div>', {
-            class: "card",
-            id: $id,
-            text: item.name
+        class: "card",
+        id: $id,
     })
-        .append($('<div>', {
-            class: "show-related",
-            text: "Related"
-        })
-            .click(handleClickRelated))
-        .append($('<div>', {
-            class: "delete",
-            text: "Delete"
-        })
-            .click(handleClickDelete));
+    .append($('<div>', {
+        class: "item-name",
+        text: item.name
+    }))
+    .append($('<div>', {
+        class: "show-related"
+    })
+    .click(handleClickRelated))
+    .append($('<div>', {
+        class: "show-delete",
+    })
+    .click(handleClickDelete));
 
-
-    $shoppingListItems.append($('<li>')
-        .append($card));
-
-
-
+    $shoppingList.append($card);
 
     scrollDivToBottom($shoppingList);
 };
 
 // Create the items for the given producer on the screen.
 const initProducerItems = function(producerName) {
-    let $itemList;
+    let $itemList = $('<div>');
     for (const itemName in scData.items) {
         const item = scData.items[itemName];
         if (item.producer === producerName) {
             // Create the parent if this is the first one
-            if (typeof $itemList === 'undefined') {
-                $itemList = $('<ul>');
-            }
-            const $item = $('<li>', {
+            const $item = $('<div>', {
                 class: "card",
                 text: itemName
             });
@@ -240,7 +222,7 @@ const initProducerItems = function(producerName) {
             $itemList.append($item);
         }
     }
-    return $itemList;
+    return $itemList.children();
 };
 
 // Convert a string to alphanumeric and numbers only and hyphens.
@@ -261,6 +243,7 @@ const initProducers = function() {
 
         // Create a card for each producer.
         const $producerDiv = $('<div>', {
+            class: "producer",
             id: "producer-" + producerName,
             text: producerName
         });
@@ -288,79 +271,52 @@ const initItems = function() {
 // $item will be the <li> containing the card.
 const reorderShoppingList = function($item) {
     i = $item; // TODO: Delete
-    const $itemId = $item.find('.card').attr('id');
-    console.log('-------------------------------------------');
-    console.log('$itemId='+$itemId);
+    const $itemId = $item.attr('id');
     if ($item.index() === 0) {
         // $item was moved to the first element.
-        console.log('Moved to first position');
         $('.work-list').each(function() {
             const $this = $(this)
             const $producerId = $this.attr('id')
-            console.log('Updating '+$producerId);
-            const $firstItem = $this.children('ul').children('li').first();
+            const $firstItem = $this.children('div.card').first();
             if ($firstItem.length === 0) {
-                console.log('  No items. Skipping');
                 return;
             }
-            f = $firstItem;
-            console.log('  $firstItem='+$firstItem.find('div.card').attr('id')+' - '+$firstItem.length);
-            a = $('div.card[shoppinglistparentid="'+$itemId+'"]');
-            b = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
-            t = $this;
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this).parents('li');
+            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
             $itemToMove.insertBefore($firstItem);
         });
-    } else if ($item.index() === $shoppingListItems.children('li').length - 1) {
+    } else if ($item.index() === $shoppingList.children('div.card').length - 1) {
         // $item was moved to the last element.
-        console.log('Moved to last position');
         $('.work-list').each(function() {
             const $this = $(this)
             const $producerId = $this.attr('id')
-            console.log('Updating '+$producerId);
-            const $lastItem = $this.children('ul').children('li').last();
+            const $lastItem = $this.children('div.card').last();
             if ($lastItem.length === 0) {
-                console.log('  No items. Skipping');
                 return;
             }
-            f = $lastItem;
-            console.log('  $lastItem='+$lastItem.find('div.card').attr('id')+' - '+$lastItem.length);
-            a = $('div.card[shoppinglistparentid="'+$itemId+'"]');
-            b = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
-            t = $this;
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this).parents('li');
+            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
             $itemToMove.insertAfter($lastItem);
         });
     } else {
         // $item was moved to somewhere in between. It must have at least one
         // item above it and at least one item below it.
-        console.log('Middle');
+        $('.work-list').each(function() {
+            const $this = $(this)
+            const $producerId = $this.attr('id')
+            const $nextShoppingListItem = $item.next();
+            const $nextItem = $this.children('div.card[shoppinglistparentid="'+$nextShoppingListItem.attr('id')+'"]').first();
+            if ($nextItem.length === 0) {
+                return;
+            }
+            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $this);
+            $itemToMove.insertBefore($nextItem);
+        });
     }
 };
-
-// const reorderTodoList = function($mainItem) {
-//     const $mainCard = $mainItem.find('.card');
-//     const mainItemId = $mainCard.attr('id');
-//     console.log('id=' + mainItemId + ', index=' + $mainItem.index());
-//
-//     // If we're not the first item, then find the previous one.
-//     if ($mainItem.index() !== 0) {
-//         const $prevItem = $shoppingListItems.children().eq($mainItem.index() - 1);
-//         console.log('prev=' + $prevItem.find('.card').attr('id'));
-//     }
-//     $shoppingListItems.children().each(function() {
-//         const $this = $(this);
-//         const $card = $this.find('.card');
-//         const itemId = $card.attr('id');
-//         console.log(itemId + ', index=' + $this.index());
-//     });
-//     // }
-// };
 
 // TODO: Rename this function to something more meaningful.
 const initDrag = function() {
     $shoppingList.sortable({
-        items: "li",
+        items: "div.card",
         placeholder: "sortable-placeholder",
         revert: 100,
         cursor: "-webkit-grabbing",
@@ -371,23 +327,6 @@ const initDrag = function() {
         stop: function( event, ui ) {
             reorderShoppingList(ui.item);
         }
-        // beforeStop: function( event, ui ) {
-        //     p = ui.position;
-        //     console.log("beforeStop ("+ui.position.top+", "+ui.position.left+")");
-        //     $( this ).sortable( "cancel" );
-        // },
-        // deactivate: function( event, ui ) {
-        //     p = ui.position;
-        //     console.log("deactivate ("+ui.position.top+", "+ui.position.left+")");
-        // }
-        // over: function(e, ui) { sortableIn = 1; console.log('In'); },
-        // out: function(e, ui) { sortableIn = 0; console.log('Out'); },
-        // beforeStop: function (event, ui) {
-        //     newItem = ui.item;
-        //     if (sortableIn == 0) {
-        //       ui.item.remove();
-        //    }
-        // }
     });
     $shoppingList.disableSelection();
 };
@@ -401,8 +340,8 @@ const handleWindowResize = function() {
 };
 
 $(document).ready(function() {
-    initProducers();
     initItems();
+    initProducers();
 
     initDrag();
 
