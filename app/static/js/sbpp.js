@@ -1,8 +1,6 @@
-// TODO: When clicking related, show required for and required by differently
 // TODO: When deleting, prompt for Y/N
 // TODO: Add offline storage
 // TODO: Add multiple cities
-// TODO: After dragging shopping list item, highlight/animate related cards briefly
 // TODO: Checkbox for item done
 
 const $producers = $('#producers');
@@ -270,6 +268,46 @@ const initItems = function() {
     }
 };
 
+// const flash = function(selector, className, times, toggle) {
+//     if (times <= 0) {
+//         selector.removeClass(className);
+//         return;
+//     }
+//     let _toggle = toggle;
+//     if (typeof(_toggle) === 'undefined') {
+//         _toggle = true;
+//     }
+//     let removeClassName;
+//     let addClassName;
+//     if (_toggle) {
+//         removeClassName = "";
+//         addClassName = className;
+//     } else {
+//         removeClassName = className;
+//         addClassName = "";
+//     }
+//     console.log('times='+times+', removeClassName='+removeClassName+',addClassName='+addClassName+', _toggle='+_toggle);
+//     selector.switchClass(removeClassName, addClassName, 100, "easeInOutQuad", function() {
+//         flash(selector, className, times-1, !_toggle);
+//     });
+// };
+
+const flash = function($selector) {
+    const duration = 75;
+    $selector.switchClass("", "reorder1", duration, "easeInOutQuad", function() {
+        $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
+            $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
+                $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
+                    $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
+                        $(this).switchClass("reorder1", "", duration,  "easeInOutQuad");
+                    });
+                });
+            });
+        });
+    });
+    // $selector.effect("shake", { times: 3, distance: 1 }, 7 * duration);
+};
+
 // If a shopping list item was moved, then move its dependent items
 // in the todo list, too.
 // $item will be the <li> containing the card.
@@ -318,6 +356,36 @@ const reorderShoppingList = function($item) {
             $itemToMove.insertBefore($nextItem);
         });
     }
+
+    // $('div.card[shoppinglistparentid="'+$itemId+'"]').effect("highlight", { times: 3, color: "red" }, 250).effect("highlight", { times: 3, color: "red" }, 250);
+    // const duration = 75;
+    // $('div.card[shoppinglistparentid="'+$itemId+'"]').switchClass("", "reorder1", duration, "easeInOutQuad", function() {
+    //     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
+    //         $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
+    //             $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
+    //                 $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
+    //                     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad");
+    //                 });
+    //             });
+    //         });
+    //     });
+    // });
+    // $item.switchClass("", "reorder1", duration, "easeInOutQuad", function() {
+    //     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
+    //         $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
+    //             $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
+    //                 $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
+    //                     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad");
+    //                 });
+    //             });
+    //         });
+    //     });
+    // });
+    // flash($('div.card[shoppinglistparentid="'+$itemId+'"]'), "reorder1", 3);
+    // flash($item, "reorder1", 3);
+    flash($('div.card[shoppinglistparentid="'+$itemId+'"]'));
+    flash($item);
+
 };
 
 // TODO: Rename this function to something more meaningful.
@@ -344,9 +412,11 @@ const initDrag = function() {
             if (newIndex !== oldIndex) {
                 reorderShoppingList(ui.item);
             }
+            console.log('update');
         },
         stop: function(event, ui) {
             // reorderShoppingList(ui.item);
+            console.log('stop');
         }
     });
     $shoppingList.disableSelection();

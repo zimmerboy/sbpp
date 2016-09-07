@@ -1,3 +1,7 @@
+$card-border-color: #ddeeee;
+$card-bg-color: #faffff;
+
+
 body {
   font-size: 10px;
 }
@@ -48,8 +52,8 @@ div#shopping-list {
 }
 
 .card {
-  border: solid 1px #ddeeee;
-  background-color: #faffff;
+  border: solid 1px $card-border-color;
+  background-color: $card-bg-color;
   margin: 2px;
   padding: 1px;
 
@@ -110,4 +114,9 @@ $base-bg-color: lighten(#E3DAEA, 0);
   background-color: darken($base-bg-color, 10);
   margin: 0;
   padding: 0 2px;
+}
+
+.reorder1 {
+  border-color: darken($card-border-color, 50);
+  background-color: darken($card-bg-color, 10);
 }
