@@ -63,6 +63,21 @@ div#shopping-list {
   }
 }
 
+.blocked {
+  border-color: #bbbbbb;
+  background-color: #f7f7f7;
+}
+
+.unblocked {
+  border-color: #FF9D4C;
+  background-color: #FFF1E6;
+}
+
+.done {
+  border-color: #47C61F;
+  background-color: #EAFDE4;
+}
+
 div.related-but {
   display: inline-block;
   width: 16px;
@@ -91,9 +106,10 @@ div.delete-but {
   background-repeat: no-repeat;
 }
 
+// TODO: Can be deleted, I think
 .related {
-  border: solid 1px green;
-  background-color: lighten(green, 70);
+  border: solid 1px red;
+  background-color: lighten(red, 70);
 }
 
 $base-border-color: #563272;
@@ -116,7 +132,28 @@ $base-bg-color: lighten(#E3DAEA, 0);
   padding: 0 2px;
 }
 
-.reorder1 {
+.reorder-flash {
   border-color: darken($card-border-color, 50);
   background-color: darken($card-bg-color, 10);
+}
+
+// .done-cb {
+
+//   label {
+//     padding-left: 10px;
+//   }
+
+//   input[type=checkbox] {
+//     // margin-left: 10px;
+//   }
+
+// }
+
+.checkbox-inline.no-indent,
+.checkbox-inline.no-indent+.checkbox-inline.no-indent {
+  margin-left: 0;
+  margin-right: 10px;
+}
+.checkbox-inline.no-indent:last-child {
+  margin-right: 0;
 }

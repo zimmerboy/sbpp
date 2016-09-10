@@ -2,11 +2,40 @@
 // TODO: Add offline storage
 // TODO: Add multiple cities
 // TODO: Checkbox for item done
+// TODO: Fix colors when you press hieararchy button and the cards are green or orange or grey
+// TODO: Similarly, fix colors when you drag to reorder and they cards flash cyan colors
 
 const $producers = $('#producers');
 const $shoppingList = $('#shopping-list');
 
 let idCounter = 1;
+
+const setCardStatusBlocked = function($card) {
+    $card.addClass('blocked');
+    $card.removeClass('done');
+    $card.removeClass('unblocked');
+    const $cb = $('.done-cb input', $card);
+    $cb.prop('checked', false);
+    $cb.prop('disabled', true);
+};
+
+const setCardStatusUnblocked = function($card) {
+    $card.addClass('unblocked');
+    $card.removeClass('done');
+    $card.removeClass('blocked');
+    const $cb = $('.done-cb input', $card);
+    $cb.prop('checked', false);
+    $cb.prop('disabled', false);
+};
+
+const setCardStatusDone = function($card) {
+    $card.addClass('done');
+    $card.removeClass('unblocked');
+    $card.removeClass('blocked');
+    const $cb = $('.done-cb input', $card);
+    $cb.prop('checked', true);
+    $cb.prop('disabled', false);
+};
 
 const createShoppingListCards = function(itemList) {
 
@@ -109,6 +138,85 @@ const handleClickRelated = function(event) {
     }
 };
 
+const doItemDoneChecked = function($card) {
+    // $card.addClass('done');
+    // $card.removeClass('unblocked');
+    setCardStatusDone($card);
+
+    const parentId = $card.attr('parentid');
+    const $parentCard = $('#'+parentId);
+
+    // Check if this is the last peer that was done, so we can unblock the parent
+    let allChildrenDone = true;
+    $('div.card[parentid="'+parentId+'"').each(function() {
+        const $this = $(this);
+        if (!$this.hasClass('done')) {
+            allChildrenDone = false;
+            return false;
+        }
+    });
+
+    if (allChildrenDone) {
+        // $parentCard.removeClass('blocked');
+        // $parentCard.addClass('unblocked');
+        // $('.done-cb input', $parentCard).prop('disabled', false);
+        setCardStatusUnblocked($parentCard);
+
+        // If the parent card is the shopping list item, then we're done.
+        const parentParentId = $parentCard.attr('parentid');
+        if (typeof(parentParentId) === 'undefined') {
+            // $parentCard.removeClass('unblocked');
+            // $parentCard.addClass('done');
+            setCardStatusDone($parentCard);
+        }
+    }
+
+
+};
+
+// Recursive
+const makeParentBlocked = function($card) {
+    const parentId = $card.attr('parentid');
+
+    // Stop recursing if we've reached the shopping list (which is the final parent)
+    if (typeof(parentId) === 'undefined') {
+        return;
+    }
+
+    const $parentCard = $('#'+parentId);
+
+    // Stop recursing when we've reached a card that is not blocked.
+    if ($parentCard.hasClass('blocked')) {
+        return;
+    }
+
+    setCardStatusBlocked($parentCard);
+    makeParentBlocked($parentCard);
+
+};
+
+const doItemDoneUnchecked = function($card) {
+    // $card.addClass('unblocked');
+    // $card.removeClass('done');
+    setCardStatusUnblocked($card);
+
+    // Traverse up the parents setting them to unblocked
+    makeParentBlocked($card);
+};
+
+const handleDoneCheckboxChanged = function(event) {
+    const $cb = $(this);
+    const $card = $cb.parents('div.card');
+    const checked = $cb.prop("checked");
+
+    if (checked) {
+        doItemDoneChecked($card);
+    } else {
+        doItemDoneUnchecked($card);
+    }
+
+};
+
 // Create a card for one of the producer lists that the user needs to make.
 /*
 <div class="card" id="Metal-2" parentId="Nails-1">
@@ -117,24 +225,48 @@ const handleClickRelated = function(event) {
 </div>
 */
 const createWorkCard = function(item, $id, $parentId, $shoppingListParentId) {
+    // let statusClass = "blocked";
+    // if (item.producer === "Factory") {
+    //     statusClass = "unblocked";
+    // }
     $card = $('<div/>', {
-        class: 'card',
+        class: "card",
         id: $id,
         parentid: $parentId,
         shoppinglistparentid: $shoppingListParentId
     })
-    .append($('<div>', {
-        class: "item-name",
-        text: item.name
-    }))
-    .append($('<div>', {
-        class: "related-but"
-    })
-        .click(handleClickRelated))
-    .append($('<div>', {
-        class: "item-name",
-        text: $id
-    }));
+        .append($('<div>', {
+            class: "item-name",
+            text: item.name
+        }))
+        .append($('<div>', {
+            class: "related-but"
+        })
+            .click(handleClickRelated))
+        .append($('<div>', {
+            class: "done-cb form-group-sm"
+        })
+
+            .append($('<label>', {
+                class: "checkbox-inline no-indent",
+            })
+                .append($('<input>', {
+                    type: "checkbox"
+                })
+                    .change(handleDoneCheckboxChanged))
+                    // .prop('disabled', statusClass === "blocked")) // TOOD: Delete
+                .append('Done')))
+        .append($('<div>', {
+            class: "item-name",
+            text: $id
+        }))
+    ;
+
+    if (item.producer === "Factory") {
+        setCardStatusUnblocked($card);
+    } else {
+        setCardStatusBlocked($card);
+    }
 
     return $card;
 };
@@ -191,19 +323,20 @@ const handleClickProducerItem = function() {
         class: "card",
         id: $id,
     })
-    .append($('<div>', {
-        class: "item-name",
-        text: item.name
-    }))
-    .append($('<div>', {
-        class: "related-but"
-    })
-    .click(handleClickRelated))
-    .append($('<div>', {
-        class: "delete-but",
-    })
-    .click(handleClickDelete));
+        .append($('<div>', {
+            class: "item-name",
+            text: item.name
+        }))
+        .append($('<div>', {
+            class: "related-but"
+        })
+            .click(handleClickRelated))
+        .append($('<div>', {
+            class: "delete-but",
+        })
+            .click(handleClickDelete));
 
+    setCardStatusBlocked($card);
     $shoppingList.append($card);
 
     scrollDivToBottom($shoppingList);
@@ -294,12 +427,13 @@ const initItems = function() {
 
 const flash = function($selector) {
     const duration = 75;
-    $selector.switchClass("", "reorder1", duration, "easeInOutQuad", function() {
-        $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
-            $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
-                $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
-                    $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
-                        $(this).switchClass("reorder1", "", duration,  "easeInOutQuad");
+    const className = "reorder-flash";
+    $selector.switchClass("", className, duration, "easeInOutQuad", function() {
+        $(this).switchClass(className, "", duration,  "easeInOutQuad", function() {
+            $(this).switchClass("", className, duration,  "easeInOutQuad", function() {
+                $(this).switchClass(className, "", duration,  "easeInOutQuad", function() {
+                    $(this).switchClass("", className, duration,  "easeInOutQuad", function() {
+                        $(this).switchClass(className, "", duration,  "easeInOutQuad");
                     });
                 });
             });
@@ -357,32 +491,6 @@ const reorderShoppingList = function($item) {
         });
     }
 
-    // $('div.card[shoppinglistparentid="'+$itemId+'"]').effect("highlight", { times: 3, color: "red" }, 250).effect("highlight", { times: 3, color: "red" }, 250);
-    // const duration = 75;
-    // $('div.card[shoppinglistparentid="'+$itemId+'"]').switchClass("", "reorder1", duration, "easeInOutQuad", function() {
-    //     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
-    //         $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
-    //             $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
-    //                 $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
-    //                     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad");
-    //                 });
-    //             });
-    //         });
-    //     });
-    // });
-    // $item.switchClass("", "reorder1", duration, "easeInOutQuad", function() {
-    //     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
-    //         $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
-    //             $(this).switchClass("reorder1", "", duration,  "easeInOutQuad", function() {
-    //                 $(this).switchClass("", "reorder1", duration,  "easeInOutQuad", function() {
-    //                     $(this).switchClass("reorder1", "", duration,  "easeInOutQuad");
-    //                 });
-    //             });
-    //         });
-    //     });
-    // });
-    // flash($('div.card[shoppinglistparentid="'+$itemId+'"]'), "reorder1", 3);
-    // flash($item, "reorder1", 3);
     flash($('div.card[shoppinglistparentid="'+$itemId+'"]'));
     flash($item);
 
