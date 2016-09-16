@@ -5,8 +5,8 @@
 // TODO: Fix colors when you press hieararchy button and the cards are green or orange or grey
 // TODO: Similarly, fix colors when you drag to reorder and they cards flash cyan colors
 
-const $producers = $('#producers');
-const $shoppingList = $('#shopping-list');
+let $producers; // $('#producers');
+let $shoppingList; // $('#shopping-list');
 
 let idCounter = 1;
 
@@ -98,10 +98,10 @@ const addRequiredFor = function($item) {
     $id = $item.attr('id');
 
     // Find each item required for this one
-    $('div.card[parentid='+$id+']').each(function() {
-        const $this = $(this)
+    $('div.card[parentid=' + $id + ']').each(function() {
+        const $this = $(this);
         addRequiredFor($this);
-    })
+    });
 
     $item.addClass('required-for');
 };
@@ -111,10 +111,10 @@ const addRequiredBy = function($item) {
     $parentid = $item.attr('parentid');
 
     // Find each item required for this one
-    $('div.card[id='+$parentid+']').each(function() {
-        const $this = $(this)
+    $('div.card[id=' + $parentid + ']').each(function() {
+        const $this = $(this);
         addRequiredBy($this);
-    })
+    });
 
     $item.addClass('required-by');
 };
@@ -144,11 +144,11 @@ const doItemDoneChecked = function($card) {
     setCardStatusDone($card);
 
     const parentId = $card.attr('parentid');
-    const $parentCard = $('#'+parentId);
+    const $parentCard = $('#' + parentId);
 
     // Check if this is the last peer that was done, so we can unblock the parent
     let allChildrenDone = true;
-    $('div.card[parentid="'+parentId+'"').each(function() {
+    $('div.card[parentid="' + parentId + '"').each(function() {
         const $this = $(this);
         if (!$this.hasClass('done')) {
             allChildrenDone = false;
@@ -164,7 +164,7 @@ const doItemDoneChecked = function($card) {
 
         // If the parent card is the shopping list item, then we're done.
         const parentParentId = $parentCard.attr('parentid');
-        if (typeof(parentParentId) === 'undefined') {
+        if (typeof (parentParentId) === 'undefined') {
             // $parentCard.removeClass('unblocked');
             // $parentCard.addClass('done');
             setCardStatusDone($parentCard);
@@ -179,11 +179,11 @@ const makeParentBlocked = function($card) {
     const parentId = $card.attr('parentid');
 
     // Stop recursing if we've reached the shopping list (which is the final parent)
-    if (typeof(parentId) === 'undefined') {
+    if (typeof (parentId) === 'undefined') {
         return;
     }
 
-    const $parentCard = $('#'+parentId);
+    const $parentCard = $('#' + parentId);
 
     // Stop recursing when we've reached a card that is not blocked.
     if ($parentCard.hasClass('blocked')) {
@@ -292,7 +292,7 @@ const addItemToShoppingList = function(item, $parentId, $shoppingListParentId) {
     const producerName = item.producer;
     const producer = scData.producers[producerName];
     // Then add the item itself.
-    const $producer = $('#' + producer.id);
+    const $producer = $('#worklist-' + producer.id);
     const $card = createWorkCard(item, $id, $parentId, $shoppingListParentId);
     $producer.append($card);
 };
@@ -303,7 +303,7 @@ const handleClickDelete = function() {
     const $card = $this.parents('.card');
     const $shoppingListParentId = $card.attr('id');
 
-    $('div.card[shoppinglistparentid="'+$shoppingListParentId+'"').remove();
+    $('div.card[shoppinglistparentid="' + $shoppingListParentId + '"').remove();
     $card.remove();
 
 };
@@ -344,7 +344,7 @@ const handleClickProducerItem = function() {
 
 // Create the items for the given producer on the screen.
 const initProducerItems = function(producerName) {
-    let $itemList = $('<div>');
+    const $itemList = $('<div>');
     for (const itemName in scData.items) {
         const item = scData.items[itemName];
         if (item.producer === producerName) {
@@ -375,6 +375,177 @@ const initProducers = function() {
         const producer = scData.producers[producerName];
         producer.id = encodeName(producerName);
         producer.name = producerName; // Lame, but there it is.
+    }
+};
+
+const initItems = function() {
+    for (const itemName in scData.items) {
+        // Add an id to each item for future reference
+        const item = scData.items[itemName];
+        item.id = encodeName(itemName);
+        item.name = itemName; // Lame, but there it is.
+    }
+};
+
+const handleChangeInStorage = function($amountDiv) {
+    const $have = $('.have', $amountDiv);
+    const have = parseInt($have.text());
+    const $need = $('.need', $amountDiv);
+    const need = parseInt($need.text());
+
+    if (have === 0 && need === 0) {
+        $amountDiv.removeClass('positive');
+        $amountDiv.removeClass('negative');
+    } else if (have >= need) {
+        $amountDiv.addClass('positive');
+        $amountDiv.removeClass('negative');
+    } else {
+        $amountDiv.removeClass('positive');
+        $amountDiv.addClass('negative');
+    }
+};
+
+const handleClickPlus = function(event) {
+    const $this = $(this);
+    const $card = $this.parents('div.card');
+    const $cardId = $card.attr('id');
+    const id = $cardId.replace('storage-', '');
+    const $amountDiv = $('div.amount', $card);
+    const $have = $('.have', $amountDiv);
+    const newHave = parseInt($have.text()) + 1;
+    $have.text(newHave);
+    handleChangeInStorage($amountDiv);
+};
+
+const handleClickMinus = function(event) {
+    const $this = $(this);
+    const $card = $this.parents('div.card');
+    const $cardId = $card.attr('id');
+    const id = $cardId.replace('storage-', '');
+    const $amountDiv = $('div.amount', $card);
+    const $have = $('.have', $amountDiv);
+    const newHave = parseInt($have.text()) - 1;
+    if (newHave < 0) {
+        return;
+    }
+    $have.text(newHave);
+    handleChangeInStorage($amountDiv);
+};
+
+const initStorage = function() {
+    const $storage = $('#storage');
+
+    // Create the divs
+    for (const producerName in scData.producers) {
+        const producer = scData.producers[producerName];
+
+        const storageProducerId = "storage-" + producer.id;
+
+        const $StorageProducerDiv = $('<div>', {
+            id: storageProducerId
+        });
+
+        const $storageProducerArea = $('<div>', {
+            class: "col-sm-1 nopadding"
+        })
+            .append($('<div>', {
+                class: "storage-area"
+            })
+                .append($('<p>', {
+                    text: producerName
+                }))
+                .append($StorageProducerDiv));
+
+        // Add the items for this producer
+        for (const itemName in scData.items) {
+            const item = scData.items[itemName];
+            if (item.producer !== producerName) {
+                continue;
+            }
+
+            // <div class="card">
+            //   <div class="item-name">Metal</div>
+            //   <div class="amount"><span class="have">1</span>/<span class="need">3</span></div>
+            //   <div class="controls">+ / -</div>
+            // </div>
+            const $plus = $('<img />', {
+                class: "plus",
+                src: "static/images/plus.png"
+            });
+            const $minus = $('<img />', {
+                class: "minus",
+                src: "static/images/minus.png"
+            });
+
+            const $card = $('<div>', {
+                class: "card",
+                id: "storage-" + item.id
+            })
+                .append($('<div>', {
+                    class: "item-name",
+                    text: itemName
+                }))
+
+                .append($('<div>', {
+                    class: "clearfix"
+                })
+
+                .append($('<div>', {
+                    class: "controls"
+                })
+                    .append($plus)
+                    .append($minus)
+                )
+                .append($('<div>', {
+                    class: "amount"
+                })
+                    .append($('<span>', {
+                        class: "have",
+                        text: "0"
+                    }))
+                    .append(' / ')
+                    .append($('<span>', {
+                        class: "need",
+                        text: "0"
+                    }))
+                ));
+
+            $plus.click(handleClickPlus);
+            $minus.click(handleClickMinus);
+
+            $StorageProducerDiv.append($card);
+        }
+
+        $storage.append($storageProducerArea);
+    }
+    $storage.children().first().addClass('col-sm-offset-2');
+
+};
+
+const initWorklist = function() {
+    $worklist = $('#worklist');
+
+
+    // <div class="col-sm-1 nopadding">
+    //   <div id="producers" class="worklist-area">
+    //   </div> <!-- #producers -->
+    // </div>
+
+    // Add the producers div
+    $p = $('<div>', {
+        class: "col-sm-1 nopadding"
+    })
+        .append($('<div>', {
+            id: "producers",
+            class: "worklist-area"
+        }));
+    $worklist.append($p);
+    $producers = $('#producers');
+
+    // Add the producers
+    for (const producerName in scData.producers) {
+
+        const producer = scData.producers[producerName];
 
         // Create a card for each producer.
         const $producerDiv = $('<div>', {
@@ -390,15 +561,61 @@ const initProducers = function() {
 
         $producers.append($producerDiv);
     }
-};
 
-const initItems = function() {
-    for (const itemName in scData.items) {
-        // Add an id to each item for future reference
-        const item = scData.items[itemName];
-        item.id = encodeName(itemName);
-        item.name = itemName; // Lame, but there it is.
+    // <div class="col-sm-1 nopadding">
+    //   <div class="worklist-area">
+    //     <p>Shopping List</p>
+    //     <div id="shopping-list">
+    //     </div> <!-- #shopping-list -->
+    //   </div>
+    // </div>
+
+    // Add the shopping list div
+    const $sl = $('<div>', {
+        class: "col-sm-1 nopadding"
+    })
+        .append($('<div>', {
+            class: "worklist-area"
+        })
+            .append($('<p>', {
+                text: "Shopping List"
+            }))
+            .append($('<div>', {
+                id: "shopping-list"
+            })));
+    $worklist.append($sl);
+    $shoppingList = $('#shopping-list');
+
+    // Add the shopping list producer lists
+
+    // <div class="col-sm-1 nopadding">
+    //   <div class="worklist-area">
+    //     <p>Factory</p>
+    //     <div id="worklist-Factory" class="work-list">
+    //     </div> <!-- #worklist-Factory -->
+    //   </div>
+    // </div>
+
+    for (const producerName in scData.producers) {
+
+        const producer = scData.producers[producerName];
+
+        const $slp = $('<div>', {
+            class: "col-sm-1 nopadding"
+        })
+            .append($('<div>', {
+                class: "worklist-area"
+            })
+                .append($('<p>', {
+                    text: producerName
+                }))
+                .append($('<div>', {
+                    id: "worklist-" + producer.id,
+                    class: "work-list"
+                })));
+        $worklist.append($slp);
     }
+
 };
 
 // const flash = function(selector, className, times, toggle) {
@@ -407,7 +624,7 @@ const initItems = function() {
 //         return;
 //     }
 //     let _toggle = toggle;
-//     if (typeof(_toggle) === 'undefined') {
+//     if (typeof (_toggle) === 'undefined') {
 //         _toggle = true;
 //     }
 //     let removeClassName;
@@ -429,11 +646,11 @@ const flash = function($selector) {
     const duration = 75;
     const className = "reorder-flash";
     $selector.switchClass("", className, duration, "easeInOutQuad", function() {
-        $(this).switchClass(className, "", duration,  "easeInOutQuad", function() {
-            $(this).switchClass("", className, duration,  "easeInOutQuad", function() {
-                $(this).switchClass(className, "", duration,  "easeInOutQuad", function() {
-                    $(this).switchClass("", className, duration,  "easeInOutQuad", function() {
-                        $(this).switchClass(className, "", duration,  "easeInOutQuad");
+        $(this).switchClass(className, "", duration, "easeInOutQuad", function() {
+            $(this).switchClass("", className, duration, "easeInOutQuad", function() {
+                $(this).switchClass(className, "", duration, "easeInOutQuad", function() {
+                    $(this).switchClass("", className, duration, "easeInOutQuad", function() {
+                        $(this).switchClass(className, "", duration, "easeInOutQuad");
                     });
                 });
             });
@@ -451,47 +668,47 @@ const reorderShoppingList = function($item) {
     if ($item.index() === 0) {
         // $item was moved to the first element.
         $('.work-list').each(function() {
-            const $producerList = $(this)
-            const $producerId = $producerList.attr('id')
+            const $producerList = $(this);
+            const $producerId = $producerList.attr('id');
             const $firstItem = $producerList.children('div.card').first();
             // If there are no other items, then nothing to do.
             if ($firstItem.length === 0) {
                 return;
             }
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $producerList);
+            const $itemToMove = $('div.card[shoppinglistparentid="' + $itemId + '"]', $producerList);
             $itemToMove.insertBefore($firstItem);
         });
     } else if ($item.index() === $shoppingList.children('div.card').length - 1) {
         // $item was moved to the last element.
         $('.work-list').each(function() {
-            const $producerList = $(this)
-            const $producerId = $producerList.attr('id')
+            const $producerList = $(this);
+            const $producerId = $producerList.attr('id');
             const $lastItem = $producerList.children('div.card').last();
             // If there are no other items, then nothing to do.
             if ($lastItem.length === 0) {
                 return;
             }
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $producerList);
+            const $itemToMove = $('div.card[shoppinglistparentid="' + $itemId + '"]', $producerList);
             $itemToMove.insertAfter($lastItem);
         });
     } else {
         // $item was moved to somewhere in between. It must have at least one
         // item above it and at least one item below it.
         $('.work-list').each(function() {
-            const $producerList = $(this)
-            const $producerId = $producerList.attr('id')
+            const $producerList = $(this);
+            const $producerId = $producerList.attr('id');
             const $nextShoppingListItem = $item.next();
-            const $nextItem = $producerList.children('div.card[shoppinglistparentid="'+$nextShoppingListItem.attr('id')+'"]').first();
+            const $nextItem = $producerList.children('div.card[shoppinglistparentid="' + $nextShoppingListItem.attr('id') + '"]').first();
             // If there are no other items, then nothing to do.
             if ($nextItem.length === 0) {
                 return;
             }
-            const $itemToMove = $('div.card[shoppinglistparentid="'+$itemId+'"]', $producerList);
+            const $itemToMove = $('div.card[shoppinglistparentid="' + $itemId + '"]', $producerList);
             $itemToMove.insertBefore($nextItem);
         });
     }
 
-    flash($('div.card[shoppinglistparentid="'+$itemId+'"]'));
+    flash($('div.card[shoppinglistparentid="' + $itemId + '"]'));
     flash($item);
 
 };
@@ -513,8 +730,8 @@ const initDrag = function() {
         },
         update: function(e, ui) {
             // gets the new and old index then removes the temporary attribute
-            var newIndex = ui.item.index();
-            var oldIndex = $(this).attr('data-previndex');
+            const newIndex = ui.item.index();
+            const oldIndex = $(this).attr('data-previndex');
             $(this).removeAttr('data-previndex');
             // Only reorder if the item actually moved.
             if (newIndex !== oldIndex) {
@@ -522,10 +739,6 @@ const initDrag = function() {
             }
             console.log('update');
         },
-        stop: function(event, ui) {
-            // reorderShoppingList(ui.item);
-            console.log('stop');
-        }
     });
     $shoppingList.disableSelection();
 };
@@ -533,7 +746,7 @@ const initDrag = function() {
 const handleWindowResize = function() {
     const outerMargin = 46;
     const height = $(window).outerHeight() - outerMargin;
-    $('div.area').css('height', height + 'px');
+    $('div.worklist-area').css('height', height + 'px');
     // $producers.css('height', height + 'px');
     // $shoppingList.css('height', height + 'px');
 };
@@ -541,6 +754,8 @@ const handleWindowResize = function() {
 $(document).ready(function() {
     initItems();
     initProducers();
+    initStorage();
+    initWorklist();
 
     initDrag();
 

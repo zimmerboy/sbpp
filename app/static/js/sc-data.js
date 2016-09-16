@@ -108,7 +108,7 @@ const scData = {
             "requirements": []
         },
 
-        "Electrical Components": {
+        "Elec. Compnts": {
             "producer": "Factory",
             "duration": 420,
             "requirements": []
@@ -183,7 +183,7 @@ const scData = {
         "Drill": {
             "producer": "Hardware Store",
             "duration": 120,
-            "requirements": [{"item": "Metal", "amount": 2}, {"item": "Plastic", "amount": 2}, {"item": "Electrical Components", "amount": 1}]
+            "requirements": [{"item": "Metal", "amount": 2}, {"item": "Plastic", "amount": 2}, {"item": "Elec. Compnts", "amount": 1}]
         },
 
         "Vegetables": {
@@ -285,7 +285,7 @@ const scData = {
         "Lawn Mower": {
             "producer": "Gardening Supplies",
             "duration": 120,
-            "requirements": [{"item": "Metal", "amount": 3}, {"item": "Electrical Components", "amount": 1}, {"item": "Paint", "amount": 1}]
+            "requirements": [{"item": "Metal", "amount": 3}, {"item": "Elec. Compnts", "amount": 1}, {"item": "Paint", "amount": 1}]
         },
 
         "Garden Gnomes": {
@@ -405,25 +405,25 @@ const scData = {
         "Refrigerator": {
             "producer": "Home Appliances",
             "duration": 210,
-            "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Chemicals", "amount": 2}, {"item": "Electrical Components", "amount": 2}]
+            "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Chemicals", "amount": 2}, {"item": "Elec. Compnts", "amount": 2}]
         },
 
         "Lighting System": {
             "producer": "Home Appliances",
             "duration": 105,
-            "requirements": [{"item": "Chemicals", "amount": 1}, {"item": "Glass", "amount": 1}, {"item": "Electrical Components", "amount": 1}]
+            "requirements": [{"item": "Chemicals", "amount": 1}, {"item": "Glass", "amount": 1}, {"item": "Elec. Compnts", "amount": 1}]
         },
 
         "TV": {
             "producer": "Home Appliances",
             "duration": 150,
-            "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Glass", "amount": 1}, {"item": "Electrical Components", "amount": 2}]
+            "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Glass", "amount": 1}, {"item": "Elec. Compnts", "amount": 2}]
         },
 
         "Microwave Oven": {
             "producer": "Home Appliances",
             "duration": 120,
-            "requirements": [{"item": "Metal", "amount": 4}, {"item": "Glass", "amount": 1}, {"item": "Electrical Components", "amount": 1}]
+            "requirements": [{"item": "Metal", "amount": 4}, {"item": "Glass", "amount": 1}, {"item": "Elec. Compnts", "amount": 1}]
         }
 
     }

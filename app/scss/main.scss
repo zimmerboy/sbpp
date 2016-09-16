@@ -12,7 +12,58 @@ div.main {
 
 }
 
-div.area {
+.card {
+  border: solid 1px $card-border-color;
+  background-color: $card-bg-color;
+  margin: 2px;
+  padding: 1px;
+
+  &:first-of-type {
+    // Prevent jumping when the related button is pressed
+    margin-top: 1px;
+  }
+}
+
+div.storage-area {
+  border: solid 1px #ddeedd;
+  overflow-y: auto;
+  margin-left: 1px;
+  margin-right: 1px;
+
+  & > p {
+    margin-bottom: 0;
+  }
+}
+
+div.storage-area {
+
+  .controls, .amount {
+    float: left;
+  }
+
+  .controls img {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+
+  .amount {
+    margin-left: 5px;
+    font-size: 12px;
+  }
+
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
+div.worklist-area {
+  margin-top: 4px;
   border: solid 1px #eeddee;
   overflow-y: auto;
   margin-left: 1px;
@@ -49,18 +100,6 @@ div#shopping-list {
     cursor: -webkit-grab; cursor: -moz-grab;
   }
 
-}
-
-.card {
-  border: solid 1px $card-border-color;
-  background-color: $card-bg-color;
-  margin: 2px;
-  padding: 1px;
-
-  &:first-of-type {
-    // Prevent jumping when the related button is pressed
-    margin-top: 1px;
-  }
 }
 
 .blocked {
