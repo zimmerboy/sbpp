@@ -5,6 +5,8 @@
 // TODO: Fix colors when you press hieararchy button and the cards are green or orange or grey
 // TODO: Similarly, fix colors when you drag to reorder and they cards flash cyan colors
 
+const barn = new Barn(localStorage);
+
 let $producers; // $('#producers');
 let $shoppingList; // $('#shopping-list');
 
@@ -297,6 +299,15 @@ const addItemToShoppingList = function(item, $parentId, $shoppingListParentId) {
     $producer.append($card);
 };
 
+const updateShoppingListInLocalStorage = function() {
+    const items = [];
+    $('div.card', $shoppingList).each(function() {
+        const $card = $(this);
+        items.push($card.attr('item'));
+    });
+    barn.set('shopping-list', items);
+};
+
 // Handle when the user clicks the delete icon on the shopping list card.
 const handleClickDelete = function() {
     const $this = $(this);
@@ -305,7 +316,7 @@ const handleClickDelete = function() {
 
     $('div.card[shoppinglistparentid="' + $shoppingListParentId + '"').remove();
     $card.remove();
-
+    updateShoppingListInLocalStorage();
 };
 
 // React when the user clicks an item in the producer list.
@@ -322,6 +333,7 @@ const handleClickProducerItem = function() {
     const $card = $('<div>', {
         class: "card",
         id: $id,
+        item: item.id
     })
         .append($('<div>', {
             class: "item-name",
@@ -338,6 +350,7 @@ const handleClickProducerItem = function() {
 
     setCardStatusBlocked($card);
     $shoppingList.append($card);
+    updateShoppingListInLocalStorage();
 
     scrollDivToBottom($shoppingList);
 };
@@ -351,6 +364,7 @@ const initProducerItems = function(producerName) {
             // Create the parent if this is the first one
             const $item = $('<div>', {
                 class: "card",
+                id: "producer-item-" + item.id,
                 text: itemName
             });
             $item.click(handleClickProducerItem);
@@ -409,11 +423,11 @@ const handleClickPlus = function(event) {
     const $this = $(this);
     const $card = $this.parents('div.card');
     const $cardId = $card.attr('id');
-    const id = $cardId.replace('storage-', '');
     const $amountDiv = $('div.amount', $card);
     const $have = $('.have', $amountDiv);
     const newHave = parseInt($have.text()) + 1;
     $have.text(newHave);
+    barn.set($cardId + '-have', newHave);
     handleChangeInStorage($amountDiv);
 };
 
@@ -421,7 +435,6 @@ const handleClickMinus = function(event) {
     const $this = $(this);
     const $card = $this.parents('div.card');
     const $cardId = $card.attr('id');
-    const id = $cardId.replace('storage-', '');
     const $amountDiv = $('div.amount', $card);
     const $have = $('.have', $amountDiv);
     const newHave = parseInt($have.text()) - 1;
@@ -429,6 +442,7 @@ const handleClickMinus = function(event) {
         return;
     }
     $have.text(newHave);
+    barn.set($cardId + '-have', newHave);
     handleChangeInStorage($amountDiv);
 };
 
@@ -477,9 +491,33 @@ const initStorage = function() {
                 src: "static/images/minus.png"
             });
 
+            const storageItemId = "storage-" + item.id;
+            let have = barn.get(storageItemId + "-have");
+            if (have === null) {
+                have = 0;
+            }
+            let need = barn.get(storageItemId + "-need");
+            if (need === null) {
+                need = 0;
+            }
+
+            const $amountDiv = $('<div>', {
+                class: "amount"
+            })
+                .append($('<span>', {
+                    class: "have",
+                    text: have
+                }))
+                .append(' / ')
+                .append($('<span>', {
+                    class: "need",
+                    text: need
+                }));
+            handleChangeInStorage($amountDiv);
+
             const $card = $('<div>', {
                 class: "card",
-                id: "storage-" + item.id
+                id: storageItemId
             })
                 .append($('<div>', {
                     class: "item-name",
@@ -496,19 +534,8 @@ const initStorage = function() {
                     .append($plus)
                     .append($minus)
                 )
-                .append($('<div>', {
-                    class: "amount"
-                })
-                    .append($('<span>', {
-                        class: "have",
-                        text: "0"
-                    }))
-                    .append(' / ')
-                    .append($('<span>', {
-                        class: "need",
-                        text: "0"
-                    }))
-                ));
+                .append($amountDiv)
+            );
 
             $plus.click(handleClickPlus);
             $minus.click(handleClickMinus);
@@ -751,6 +778,15 @@ const handleWindowResize = function() {
     // $shoppingList.css('height', height + 'px');
 };
 
+const loadShoppingList = function() {
+    const items = barn.get('shopping-list');
+    for (let i = 0; i < items.length; i++) {
+        const itemId = items[i];
+        const $item = $('#producer-item-' + itemId);
+        $item.click();
+    }
+};
+
 $(document).ready(function() {
     initItems();
     initProducers();
@@ -763,5 +799,7 @@ $(document).ready(function() {
         handleWindowResize();
     });
     handleWindowResize();
+
+    loadShoppingList();
 
 });
