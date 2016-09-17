@@ -1,11 +1,10 @@
 // TODO: When deleting, prompt for Y/N
 // TODO: Add offline storage
 // TODO: Add multiple cities
-// TODO: Checkbox for item done
 // TODO: Fix colors when you press hieararchy button and the cards are green or orange or grey
 // TODO: Similarly, fix colors when you drag to reorder and they cards flash cyan colors
 
-const barn = new Barn(localStorage);
+const barnTest = new Barn('Barn01', localStorage);
 
 let $producers; // $('#producers');
 let $shoppingList; // $('#shopping-list');
@@ -16,27 +15,18 @@ const setCardStatusBlocked = function($card) {
     $card.addClass('blocked');
     $card.removeClass('done');
     $card.removeClass('unblocked');
-    const $cb = $('.done-cb input', $card);
-    $cb.prop('checked', false);
-    $cb.prop('disabled', true);
 };
 
 const setCardStatusUnblocked = function($card) {
     $card.addClass('unblocked');
     $card.removeClass('done');
     $card.removeClass('blocked');
-    const $cb = $('.done-cb input', $card);
-    $cb.prop('checked', false);
-    $cb.prop('disabled', false);
 };
 
 const setCardStatusDone = function($card) {
     $card.addClass('done');
     $card.removeClass('unblocked');
     $card.removeClass('blocked');
-    const $cb = $('.done-cb input', $card);
-    $cb.prop('checked', true);
-    $cb.prop('disabled', false);
 };
 
 const createShoppingListCards = function(itemList) {
@@ -140,9 +130,7 @@ const handleClickRelated = function(event) {
     }
 };
 
-const doItemDoneChecked = function($card) {
-    // $card.addClass('done');
-    // $card.removeClass('unblocked');
+const doItemDone = function($card) {
     setCardStatusDone($card);
 
     const parentId = $card.attr('parentid');
@@ -159,20 +147,14 @@ const doItemDoneChecked = function($card) {
     });
 
     if (allChildrenDone) {
-        // $parentCard.removeClass('blocked');
-        // $parentCard.addClass('unblocked');
-        // $('.done-cb input', $parentCard).prop('disabled', false);
         setCardStatusUnblocked($parentCard);
 
         // If the parent card is the shopping list item, then we're done.
         const parentParentId = $parentCard.attr('parentid');
         if (typeof (parentParentId) === 'undefined') {
-            // $parentCard.removeClass('unblocked');
-            // $parentCard.addClass('done');
             setCardStatusDone($parentCard);
         }
     }
-
 
 };
 
@@ -197,26 +179,13 @@ const makeParentBlocked = function($card) {
 
 };
 
-const doItemDoneUnchecked = function($card) {
+const doItemUndone = function($card) {
     // $card.addClass('unblocked');
     // $card.removeClass('done');
     setCardStatusUnblocked($card);
 
     // Traverse up the parents setting them to unblocked
     makeParentBlocked($card);
-};
-
-const handleDoneCheckboxChanged = function(event) {
-    const $cb = $(this);
-    const $card = $cb.parents('div.card');
-    const checked = $cb.prop("checked");
-
-    if (checked) {
-        doItemDoneChecked($card);
-    } else {
-        doItemDoneUnchecked($card);
-    }
-
 };
 
 // Create a card for one of the producer lists that the user needs to make.
@@ -235,7 +204,8 @@ const createWorkCard = function(item, $id, $parentId, $shoppingListParentId) {
         class: "card",
         id: $id,
         parentid: $parentId,
-        shoppinglistparentid: $shoppingListParentId
+        shoppinglistparentid: $shoppingListParentId,
+        itemId: item.id
     })
         .append($('<div>', {
             class: "item-name",
@@ -244,25 +214,7 @@ const createWorkCard = function(item, $id, $parentId, $shoppingListParentId) {
         .append($('<div>', {
             class: "related-but"
         })
-            .click(handleClickRelated))
-        .append($('<div>', {
-            class: "done-cb form-group-sm"
-        })
-
-            .append($('<label>', {
-                class: "checkbox-inline no-indent",
-            })
-                .append($('<input>', {
-                    type: "checkbox"
-                })
-                    .change(handleDoneCheckboxChanged))
-                    // .prop('disabled', statusClass === "blocked")) // TOOD: Delete
-                .append('Done')))
-        .append($('<div>', {
-            class: "item-name",
-            text: $id
-        }))
-    ;
+            .click(handleClickRelated));
 
     if (item.producer === "Factory") {
         setCardStatusUnblocked($card);
@@ -303,9 +255,9 @@ const updateShoppingListInLocalStorage = function() {
     const items = [];
     $('div.card', $shoppingList).each(function() {
         const $card = $(this);
-        items.push($card.attr('item'));
+        items.push($card.attr('itemId'));
     });
-    barn.set('shopping-list', items);
+    barnTest.set('shopping-list', items);
 };
 
 // Handle when the user clicks the delete icon on the shopping list card.
@@ -333,7 +285,7 @@ const handleClickProducerItem = function() {
     const $card = $('<div>', {
         class: "card",
         id: $id,
-        item: item.id
+        itemId: item.id
     })
         .append($('<div>', {
             class: "item-name",
@@ -401,12 +353,56 @@ const initItems = function() {
     }
 };
 
+const updateWorkListItemStatuses = function() {
+    // Clear all of the statuses in the shopping list and worklist
+    $('div.card', $shoppingList).each(function() {
+        setCardStatusBlocked($(this));
+    });
+    $('div.card', 'div.work-list').each(function() {
+        setCardStatusBlocked($(this));
+    });
+    // Factory items are an exception, they cannot be blocked.
+    $('div.card', '#worklist-Factory').each(function() {
+        setCardStatusUnblocked($(this));
+    });
+
+    // Loop over each storage area, and each item within there.
+    $('div.storage-producer', '#storage').each(function() {
+        const $thisProducer = $(this);
+        const producerId = $thisProducer.attr('producerId');
+
+        $('div.card', $thisProducer).each(function() {
+            const $thisStorageItem = $(this);
+            const itemId = $thisStorageItem.attr('itemId');
+            const have = parseInt($('.have', $thisStorageItem).text());
+            if (have === 0) {
+                return true; // Continue
+            }
+
+            $worklist = $('#worklist-'+producerId);
+            $('div.card[itemId="' + itemId + '"]:lt(' + have + ')', $worklist).each(function() {
+                const $this = $(this);
+                const unblocked = $this.hasClass('unblocked');
+                const done = $this.hasClass('done');
+                if (unblocked) {
+                    doItemDone($this);
+                } else if (done) {
+                    doItemUndone($this);
+                }
+            });
+        });
+    });
+
+};
+
 const handleChangeInStorage = function($amountDiv) {
+    // Update the number on the screen.
     const $have = $('.have', $amountDiv);
     const have = parseInt($have.text());
     const $need = $('.need', $amountDiv);
     const need = parseInt($need.text());
 
+    // Update the look-and-feel
     if (have === 0 && need === 0) {
         $amountDiv.removeClass('positive');
         $amountDiv.removeClass('negative');
@@ -417,6 +413,8 @@ const handleChangeInStorage = function($amountDiv) {
         $amountDiv.removeClass('positive');
         $amountDiv.addClass('negative');
     }
+
+    updateWorkListItemStatuses();
 };
 
 const handleClickPlus = function(event) {
@@ -427,7 +425,7 @@ const handleClickPlus = function(event) {
     const $have = $('.have', $amountDiv);
     const newHave = parseInt($have.text()) + 1;
     $have.text(newHave);
-    barn.set($cardId + '-have', newHave);
+    barnTest.set($cardId + '-have', newHave);
     handleChangeInStorage($amountDiv);
 };
 
@@ -442,7 +440,7 @@ const handleClickMinus = function(event) {
         return;
     }
     $have.text(newHave);
-    barn.set($cardId + '-have', newHave);
+    barnTest.set($cardId + '-have', newHave);
     handleChangeInStorage($amountDiv);
 };
 
@@ -456,7 +454,9 @@ const initStorage = function() {
         const storageProducerId = "storage-" + producer.id;
 
         const $StorageProducerDiv = $('<div>', {
-            id: storageProducerId
+            class: "storage-producer",
+            id: storageProducerId,
+            producerId: producer.id
         });
 
         const $storageProducerArea = $('<div>', {
@@ -492,32 +492,25 @@ const initStorage = function() {
             });
 
             const storageItemId = "storage-" + item.id;
-            let have = barn.get(storageItemId + "-have");
-            if (have === null) {
-                have = 0;
-            }
-            let need = barn.get(storageItemId + "-need");
-            if (need === null) {
-                need = 0;
-            }
 
             const $amountDiv = $('<div>', {
                 class: "amount"
             })
                 .append($('<span>', {
                     class: "have",
-                    text: have
+                    text: 0
                 }))
                 .append(' / ')
                 .append($('<span>', {
                     class: "need",
-                    text: need
+                    text: 0
                 }));
             handleChangeInStorage($amountDiv);
 
             const $card = $('<div>', {
                 class: "card",
-                id: storageItemId
+                id: storageItemId,
+                itemId: item.id
             })
                 .append($('<div>', {
                     class: "item-name",
@@ -645,30 +638,6 @@ const initWorklist = function() {
 
 };
 
-// const flash = function(selector, className, times, toggle) {
-//     if (times <= 0) {
-//         selector.removeClass(className);
-//         return;
-//     }
-//     let _toggle = toggle;
-//     if (typeof (_toggle) === 'undefined') {
-//         _toggle = true;
-//     }
-//     let removeClassName;
-//     let addClassName;
-//     if (_toggle) {
-//         removeClassName = "";
-//         addClassName = className;
-//     } else {
-//         removeClassName = className;
-//         addClassName = "";
-//     }
-//     console.log('times='+times+', removeClassName='+removeClassName+',addClassName='+addClassName+', _toggle='+_toggle);
-//     selector.switchClass(removeClassName, addClassName, 100, "easeInOutQuad", function() {
-//         flash(selector, className, times-1, !_toggle);
-//     });
-// };
-
 const flash = function($selector) {
     const duration = 75;
     const className = "reorder-flash";
@@ -738,6 +707,9 @@ const reorderShoppingList = function($item) {
     flash($('div.card[shoppinglistparentid="' + $itemId + '"]'));
     flash($item);
 
+    updateShoppingListInLocalStorage();
+
+    updateWorkListItemStatuses();
 };
 
 // TODO: Rename this function to something more meaningful.
@@ -764,7 +736,6 @@ const initDrag = function() {
             if (newIndex !== oldIndex) {
                 reorderShoppingList(ui.item);
             }
-            console.log('update');
         },
     });
     $shoppingList.disableSelection();
@@ -779,7 +750,7 @@ const handleWindowResize = function() {
 };
 
 const loadShoppingList = function() {
-    const items = barn.get('shopping-list');
+    const items = barnTest.get('shopping-list');
     for (let i = 0; i < items.length; i++) {
         const itemId = items[i];
         const $item = $('#producer-item-' + itemId);
@@ -787,7 +758,36 @@ const loadShoppingList = function() {
     }
 };
 
-$(document).ready(function() {
+const loadStorage = function() {
+    $('div.storage-producer', '#storage').each(function() {
+        const $thisProducer = $(this);
+
+        $('div.card', $thisProducer).each(function() {
+            const $thisStorageItem = $(this);
+            const cardId = $thisStorageItem.attr('id');
+            const haveId = cardId+'-have';
+            const have = barnTest.get(haveId);
+            if (have !== null) {
+                const $amountDiv = $('.amount', $thisStorageItem);
+                $('.have', $amountDiv).text(have);
+                handleChangeInStorage($amountDiv);
+            }
+            const needId = cardId+'-need';
+            const need = barnTest.get(needId);
+            if (need !== null) {
+                const $amountDiv = $('.amount', $thisStorageItem);
+                $('.need', $amountDiv).text(need);
+                handleChangeInStorage($amountDiv);
+            }
+        });
+
+    });
+};
+
+const resetScreen = function() {
+    $('#storage').empty();
+    $('#worklist').empty();
+
     initItems();
     initProducers();
     initStorage();
@@ -795,11 +795,16 @@ $(document).ready(function() {
 
     initDrag();
 
+    loadShoppingList();
+    loadStorage();
+};
+
+$(document).ready(function() {
+    resetScreen();
+
     $(window).on('resize', function() {
         handleWindowResize();
     });
     handleWindowResize();
-
-    loadShoppingList();
 
 });
