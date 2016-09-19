@@ -1,21 +1,31 @@
 {% extends "base-layout.njk" %}
 
-{% block title %}My Title{% endblock %}
+{% block title %}SBPP{% endblock %}
 
 {% block content %}
 
 <div class="container-fluid main">
 
   <div id="storage" class="row">
+    <!--
+    <div id="storage-Factory"></div><div id="storage-HardwareStore"></div>
+    -->
   </div> <!-- row -->
 
-  <div id="worklist" class="row">
+  <div id="work" class="row">
+
+    <div id="producerList" class="">
+    </div>
+    <!--
+    <div id="producerList"><div id="producerList-Factory"></div><div id="producerList-HardwareStore"></div></div>
+    <div id="shoppingList"></div>
+    <div id="todoList"><div id="todoList-Factory"></div><div id="todoList-HardwareStore"></div></div>
+    -->
   </div> <!-- row -->
 
 </div> <!-- .container -->
 
 <!-- TODO: Remove sortable files from source -->
-<!-- <script src="static/lib/jquery-sortable/jquery-sortable.min.js"></script> -->
 <script src="static/lib/jquery-ui/jquery-ui.min.js"></script>
 
 <script src="static/lib/barn/barn.min.js"></script>
@@ -23,17 +33,4 @@
 <script src="static/js/sc-data.js"></script>
 <script src="static/js/sbpp.js"></script>
 
-
-<!-- <script>
-
-  $(document).ready(function() {
-
-    $(function  () {
-      $('ol.sortable').sortable();
-    });
-
-  });
-
-</script>
--->
 {% endblock %}
