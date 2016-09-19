@@ -29,6 +29,21 @@ const setCardStatusDone = function($card) {
     $card.removeClass('blocked');
 };
 
+const updateAmountColors = function($amountDiv) {
+    const have = parseInt($('.have', $amountDiv).text());
+    const need = parseInt($('.need', $amountDiv).text());
+    if (have === 0 && need === 0) {
+        $amountDiv.removeClass('positive');
+        $amountDiv.removeClass('negative');
+    } else if (have >= need) {
+        $amountDiv.addClass('positive');
+        $amountDiv.removeClass('negative');
+    } else {
+        $amountDiv.removeClass('positive');
+        $amountDiv.addClass('negative');
+    }
+};
+
 const createShoppingListCards = function(itemList) {
 
     const $shoppingListCard = $('<div>', {
@@ -249,6 +264,13 @@ const addItemToShoppingList = function(item, $parentId, $shoppingListParentId) {
     const $producer = $('#worklist-' + producer.id);
     const $card = createWorkCard(item, $id, $parentId, $shoppingListParentId);
     $producer.append($card);
+
+    // Update the need value.
+    const $amountDiv = $('div.amount', '#storage-'+item.id);
+    const $need = $('.need', $amountDiv);
+    let need = parseInt($need.text()) + 1;
+    $need.text(need);
+    updateAmountColors($amountDiv);
 };
 
 const updateShoppingListInLocalStorage = function() {
@@ -268,6 +290,19 @@ const handleClickDelete = function() {
 
     $('div.card[shoppinglistparentid="' + $shoppingListParentId + '"').remove();
     $card.remove();
+
+    // Update the need value.
+    const itemId = $card.attr('itemId');
+    const $amountDiv = $('div.amount', '#storage-'+itemId);
+    const $need = $('.need', $amountDiv);
+    let need = parseInt($need.text()) - 1;
+    if (need < 0) {
+        console.log('Need is less than zero. This should never happen, doh!');
+        need = 0;
+    }
+    $need.text(need);
+    updateAmountColors($amountDiv);
+
     updateShoppingListInLocalStorage();
 };
 
@@ -355,7 +390,9 @@ const initItems = function() {
 
 const updateWorkListItemStatuses = function() {
     // Clear all of the statuses in the shopping list and worklist
+    // console.log('shopping list = ', $shoppingList);
     $('div.card', $shoppingList).each(function() {
+        // console.log('  '+$(this).attr('id'));
         setCardStatusBlocked($(this));
     });
     $('div.card', 'div.work-list').each(function() {
@@ -396,24 +433,7 @@ const updateWorkListItemStatuses = function() {
 };
 
 const handleChangeInStorage = function($amountDiv) {
-    // Update the number on the screen.
-    const $have = $('.have', $amountDiv);
-    const have = parseInt($have.text());
-    const $need = $('.need', $amountDiv);
-    const need = parseInt($need.text());
-
-    // Update the look-and-feel
-    if (have === 0 && need === 0) {
-        $amountDiv.removeClass('positive');
-        $amountDiv.removeClass('negative');
-    } else if (have >= need) {
-        $amountDiv.addClass('positive');
-        $amountDiv.removeClass('negative');
-    } else {
-        $amountDiv.removeClass('positive');
-        $amountDiv.addClass('negative');
-    }
-
+    updateAmountColors($amountDiv);
     updateWorkListItemStatuses();
 };
 
@@ -505,7 +525,7 @@ const initStorage = function() {
                     class: "need",
                     text: 0
                 }));
-            handleChangeInStorage($amountDiv);
+            // handleChangeInStorage($amountDiv);
 
             const $card = $('<div>', {
                 class: "card",
@@ -659,7 +679,6 @@ const flash = function($selector) {
 // in the todo list, too.
 // $item will be the <li> containing the card.
 const reorderShoppingList = function($item) {
-    i = $item; // TODO: Delete
     const $itemId = $item.attr('id');
     if ($item.index() === 0) {
         // $item was moved to the first element.
