@@ -1,16 +1,124 @@
-$card-border-color: #ddeeee;
-$card-bg-color: #faffff;
+$storage-area-border: solid 1px #ddeedd;
+$storage-list-card-color: #343838;
+$storage-list-card-bg-color: #faffff;
+$storage-list-card-border: solid 1px #ddeeee;
 
+$todo-list-area-border-color: $storage-area-border;
 
 body {
   font-size: 10px;
+  font-family: HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
 }
 
 div.main {
   margin-left: 2px;
   margin-right: 2px;
-
 }
+
+.nopadding {
+  padding: 0;
+}
+
+.area {
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+p.name {
+  margin-bottom: 0;
+  margin-left: 2px;
+}
+
+#storage {
+  // display: table;
+}
+
+// #storage .a1 {
+//   display: table;
+//   border: solid 1px red;
+//   background-color: green;
+// }
+
+#storage .area {
+  border: $storage-area-border;
+  // display: table-row;
+  // height: 100%;
+}
+
+#work {
+  margin-top: 4px;
+}
+
+#producer-list, #shopping-list, #todo-list .area{
+  overflow-y: auto;
+}
+
+#producer-list.area {
+  border: $storage-area-border;
+}
+
+.producer > p {
+  margin-bottom: 0;
+  margin-left: 2px;
+  margin-right: 2px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 2px;
+  background-color: darken($storage-list-card-bg-color, 7);
+}
+.producer:first-of-type p {
+  margin-top: 0;
+}
+
+#shopping-list.area {
+  border: $storage-area-border;
+}
+
+#todo-list .area {
+  border: $todo-list-area-border-color;
+}
+
+div.card {
+  margin: 2px;
+  padding: 1px;
+}
+
+#storage div.card {
+  color: $storage-list-card-color;
+  border: $storage-list-card-border;
+}
+
+#producer-list div.card {
+  color: $storage-list-card-color;
+  background-color: $storage-list-card-bg-color;
+  border: $storage-list-card-border;
+  cursor: pointer;
+}
+
+.blocked {
+  color: #555555;
+  background-color: #f7f7f7;
+  border: solid 1px #cccccc;
+}
+
+.unblocked {
+  color: #b56d6e;
+  background-color: #FFE6E6;
+  border: solid 1px #FFADAD;
+}
+
+.building {
+  color: #FF9D4C;
+  background-color: #FFF1E6;
+  border: solid 1px #FF9D4C;
+}
+
+.done {
+  color: #47C61F;
+  background-color: #EAFDE4;
+  border: solid 1px #47C61F;
+}
+
 
 /*
 .card {
