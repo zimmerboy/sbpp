@@ -13,8 +13,30 @@
 
         <p class="name">Factory</p>
 
-        <div class="card">
-          111
+<!--         <div class="card" id="storage-Metal">
+          <div class="item-name">Metal</div>
+          <div class="clearfix">
+            <div class="controls">
+              <img class="plus" src="static/images/plus.png"><img class="minus" src="static/images/minus.png">
+            </div>
+            <div class="amount negative">
+              <span class="have">0</span> / <span class="need">1</span>
+            </div>
+          </div>
+        </div>
+ -->
+        <div class="card" id="storage-Metal">
+          <div class="item-name">
+            Metal
+          </div>
+          <div class="clearfix">
+            <div class="building">
+                <img class="plus" src="static/images/plus.png"><img class="minus" src="static/images/minus.png"><span class="building-amount">0</span>
+            </div>
+            <div class="amount">
+                <img class="plus" src="static/images/plus.png"><img class="minus" src="static/images/minus.png"><span class="have-amount">0</span> / <span class="need-amount">0</span>
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -138,5 +160,7 @@
 
 <script src="static/js/sc-data.js"></script>
 <script src="static/js/sbpp.js"></script>
+<script src="static/js/storage.js"></script>
+<script src="static/js/shopping-list.js"></script>
 
 {% endblock %}

@@ -1,503 +1,575 @@
 /* eslint-disable no-unused-vars */
 
-const scProducers = {
+const scProducers = [
 
-    "Factory": {
+    {
+        "id": "Factory",
         "name": "Factory",
         "imageUrl": "a"
     },
 
-    "BuildingSuppliesStore": {
+    {
+        "id": "BuildingSuppliesStore",
         "name": "Building Supplies Store",
-        "imageUrl": ""
-    },
-
-    "HardwareStore": {
-        "name": "Hardware Store",
-        "imageUrl": "cc"
-    },
-
-    "FarmersMarket": {
-        "name": "Farmer's Market",
-        "imageUrl": ""
-    },
-
-    "FurnitureStore": {
-        "name": "Furniture Store",
-        "imageUrl": ""
-    },
-
-    "GardeningSupplies": {
-        "name": "Gardening Supplies",
-        "imageUrl": ""
-    },
-
-    "DonutShop": {
-        "name": "Donut Shop",
-        "imageUrl": ""
-    },
-
-    "FashionStore": {
-        "name": "Fashion Store",
         "imageUrl": "b"
     },
 
-    "FastFoodRestaurant": {
-        "name": "Fast Food Restaurant",
-        "imageUrl": ""
+    {
+        "id": "HardwareStore",
+        "name": "Hardware Store",
+        "imageUrl": "c"
     },
 
-    "HomeAppliances": {
+    {
+        "id": "FarmersMarket",
+        "name": "Farmer's Market",
+        "imageUrl": "d"
+    },
+
+    {
+        "id": "FurnitureStore",
+        "name": "Furniture Store",
+        "imageUrl": "e"
+    },
+
+    {
+        "id": "GardeningSupplies",
+        "name": "Gardening Supplies",
+        "imageUrl": "f"
+    },
+
+    {
+        "id": "DonutShop",
+        "name": "Donut Shop",
+        "imageUrl": "g"
+    },
+
+    {
+        "id": "FashionStore",
+        "name": "Fashion Store",
+        "imageUrl": "h"
+    },
+
+    {
+        "id": "FastFoodRestaurant",
+        "name": "Fast Food Restaurant",
+        "imageUrl": "i"
+    },
+
+    {
+        "id": "HomeAppliances",
         "name": "Home Appliances",
-        "imageUrl": ""
+        "imageUrl": "j"
     }
 
-};
+];
 
-const scItems = {
+const scItems = [
 
-    "Metal": {
+    {
+        "id": "Metal",
         "name": "Metal",
         "producerId": "Factory",
         "duration": 1,
         "requirements": []
     },
 
-    "Wood": {
+    {
+        "id": "Wood",
         "name": "Wood",
         "producerId": "Factory",
         "duration": 3,
         "requirements": []
     },
 
-    "Plastic": {
+    {
+        "id": "Plastic",
         "name": "Plastic",
         "producerId": "Factory",
         "duration": 9,
         "requirements": []
     },
 
-    "Seeds": {
+    {
+        "id": "Seeds",
         "name": "Seeds",
         "producerId": "Factory",
         "duration": 20,
         "requirements": []
     },
 
-    "Minerals": {
+    {
+        "id": "Minerals",
         "name": "Minerals",
         "producerId": "Factory",
         "duration": 30,
         "requirements": []
     },
 
-    "Chemicals": {
+    {
+        "id": "Chemicals",
         "name": "Chemicals",
         "producerId": "Factory",
         "duration": 120,
         "requirements": []
     },
 
-    "Textiles": {
+    {
+        "id": "Textiles",
         "name": "Textiles",
         "producerId": "Factory",
         "duration": 180,
         "requirements": []
     },
 
-    "SugarAndSpices": {
+    {
+        "id": "SugarAndSpices",
         "name": "Sugar & Spices",
         "producerId": "Factory",
         "duration": 240,
         "requirements": []
     },
 
-    "Glass": {
+    {
+        "id": "Glass",
         "name": "Glass",
         "producerId": "Factory",
         "duration": 300,
         "requirements": []
     },
 
-    "AnimalFeed": {
+    {
+        "id": "AnimalFeed",
         "name": "Animal Feed",
         "producerId": "Factory",
         "duration": 360,
         "requirements": []
     },
 
-    "ElectronicComponents": {
+    {
+        "id": "ElectronicComponents",
         "name": "Elec. Compnts",
         "producerId": "Factory",
         "duration": 420,
         "requirements": []
     },
 
-    "Nails": {
+    {
+        "id": "Nails",
         "name": "Nails",
         "producerId": "BuildingSuppliesStore",
         "duration": 5,
-        "requirements": [{"item": "Metal", "amount": 2}]
+        "requirements": [{"itemId": "Metal", "amount": 2}]
     },
 
-    "Planks": {
+    {
+        "id": "Planks",
         "name": "Planks",
         "producerId": "BuildingSuppliesStore",
         "duration": 30,
-        "requirements": [{"item": "Wood", "amount": 2}]
+        "requirements": [{"itemId": "Wood", "amount": 2}]
     },
 
-    "Bricks": {
+    {
+        "id": "Bricks",
         "name": "Bricks",
         "producerId": "BuildingSuppliesStore",
         "duration": 20,
-        "requirements": [{"item": "Minerals", "amount": 2}]
+        "requirements": [{"itemId": "Minerals", "amount": 2}]
     },
 
-    "Cement": {
+    {
+        "id": "Cement",
         "name": "Cement",
         "producerId": "BuildingSuppliesStore",
         "duration": 50,
-        "requirements": [{"item": "Minerals", "amount": 2}, {"item": "Chemicals", "amount": 1}]
+        "requirements": [{"itemId": "Minerals", "amount": 2}, {"itemId": "Chemicals", "amount": 1}]
     },
 
-    "Glue": {
+    {
+        "id": "Glue",
         "name": "Glue",
         "producerId": "BuildingSuppliesStore",
         "duration": 60,
-        "requirements": [{"item": "Plastic", "amount": 1}, {"item": "Chemicals", "amount": 2}]
+        "requirements": [{"itemId": "Plastic", "amount": 1}, {"itemId": "Chemicals", "amount": 2}]
     },
 
-    "Paint": {
+    {
+        "id": "Paint",
         "name": "Paint",
         "producerId": "BuildingSuppliesStore",
         "duration": 60,
-        "requirements": [{"item": "Metal", "amount": 2}, {"item": "Minerals", "amount": 1}, {"item": "Chemicals", "amount": 2}]
+        "requirements": [{"itemId": "Metal", "amount": 2}, {"itemId": "Minerals", "amount": 1}, {"itemId": "Chemicals", "amount": 2}]
     },
 
-    "Hammer": {
+    {
+        "id": "Hammer",
         "name": "Hammer",
         "producerId": "HardwareStore",
         "duration": 14,
-        "requirements": [{"item": "Metal", "amount": 1}, {"item": "Wood", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 1}, {"itemId": "Wood", "amount": 1}]
     },
 
-    "MeasuringTape": {
+    {
+        "id": "MeasuringTape",
         "name": "Measuring Tape",
         "producerId": "HardwareStore",
         "duration": 20,
-        "requirements": [{"item": "Metal", "amount": 1}, {"item": "Plastic", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 1}, {"itemId": "Plastic", "amount": 1}]
     },
 
-    "Shovel": {
+    {
+        "id": "Shovel",
         "name": "Shovel",
         "producerId": "HardwareStore",
         "duration": 30,
-        "requirements": [{"item": "Metal", "amount": 1}, {"item": "Wood", "amount": 1}, {"item": "Plastic", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 1}, {"itemId": "Wood", "amount": 1}, {"itemId": "Plastic", "amount": 1}]
     },
 
-    "CookingUtensil": {
+    {
+        "id": "CookingUtensil",
         "name": "Cooking Utensil",
         "producerId": "HardwareStore",
         "duration": 45,
-        "requirements": [{"item": "Metal", "amount": 2}, {"item": "Wood", "amount": 2}, {"item": "Plastic", "amount": 2}]
+        "requirements": [{"itemId": "Metal", "amount": 2}, {"itemId": "Wood", "amount": 2}, {"itemId": "Plastic", "amount": 2}]
     },
 
-    "Ladder": {
+    {
+        "id": "Ladder",
         "name": "Ladder",
         "producerId": "HardwareStore",
         "duration": 60,
-        "requirements": [{"item": "Metal", "amount": 2}, {"item": "Planks", "amount": 2}]
+        "requirements": [{"itemId": "Metal", "amount": 2}, {"itemId": "Planks", "amount": 2}]
     },
 
-    "Drill": {
+    {
+        "id": "Drill",
         "name": "Drill",
         "producerId": "HardwareStore",
         "duration": 120,
-        "requirements": [{"item": "Metal", "amount": 2}, {"item": "Plastic", "amount": 2}, {"item": "ElectronicComponents", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 2}, {"itemId": "Plastic", "amount": 2}, {"itemId": "ElectronicComponents", "amount": 1}]
     },
 
-    "Vegetables": {
+    {
+        "id": "Vegetables",
         "name": "Vegetables",
         "producerId": "FarmersMarket",
         "duration": 20,
-        "requirements": [{"item": "Seeds", "amount": 2}]
+        "requirements": [{"itemId": "Seeds", "amount": 2}]
     },
 
-    "FlourBag": {
+    {
+        "id": "FlourBag",
         "name": "Flour Bag",
         "producerId": "FarmersMarket",
         "duration": 30,
-        "requirements": [{"item": "Seeds", "amount": 2}, {"item": "Textiles", "amount": 2}]
+        "requirements": [{"itemId": "Seeds", "amount": 2}, {"itemId": "Textiles", "amount": 2}]
     },
 
-    "FruitAndBerries": {
+    {
+        "id": "FruitAndBerries",
         "name": "Fruit & Berries",
         "producerId": "FarmersMarket",
         "duration": 90,
-        "requirements": [{"item": "Seeds", "amount": 2}, {"item": "TreeSaplings", "amount": 1}]
+        "requirements": [{"itemId": "Seeds", "amount": 2}, {"itemId": "TreeSaplings", "amount": 1}]
     },
 
-    "Cream": {
+    {
+        "id": "Cream",
         "name": "Cream",
         "producerId": "FarmersMarket",
         "duration": 75,
-        "requirements": [{"item": "AnimalFeed", "amount": 1}]
+        "requirements": [{"itemId": "AnimalFeed", "amount": 1}]
     },
 
-    "Corn": {
+    {
+        "id": "Corn",
         "name": "Corn",
         "producerId": "FarmersMarket",
         "duration": 60,
-        "requirements": [{"item": "Minerals", "amount": 1}, {"item": "Seeds", "amount": 4}]
+        "requirements": [{"itemId": "Minerals", "amount": 1}, {"itemId": "Seeds", "amount": 4}]
     },
 
-    "Cheese": {
+    {
+        "id": "Cheese",
         "name": "Cheese",
         "producerId": "FarmersMarket",
         "duration": 105,
-        "requirements": [{"item": "AnimalFeed", "amount": 2}]
+        "requirements": [{"itemId": "AnimalFeed", "amount": 2}]
     },
 
-    "Beef": {
+    {
+        "id": "Beef",
         "name": "Beef",
         "producerId": "FarmersMarket",
         "duration": 150,
-        "requirements": [{"item": "AnimalFeed", "amount": 3}]
+        "requirements": [{"itemId": "AnimalFeed", "amount": 3}]
     },
 
-    "Chairs": {
+    {
+        "id": "Chairs",
         "name": "Chairs",
         "producerId": "FurnitureStore",
         "duration": 20,
-        "requirements": [{"item": "Wood", "amount": 2}, {"item": "Nails", "amount": 1}, {"item": "Hammer", "amount": 1}]
+        "requirements": [{"itemId": "Wood", "amount": 2}, {"itemId": "Nails", "amount": 1}, {"itemId": "Hammer", "amount": 1}]
     },
 
-    "Tables": {
+    {
+        "id": "Tables",
         "name": "Tables",
         "producerId": "FurnitureStore",
         "duration": 30,
-        "requirements": [{"item": "Nails", "amount": 2}, {"item": "Planks", "amount": 1}, {"item": "Hammer", "amount": 1}]
+        "requirements": [{"itemId": "Nails", "amount": 2}, {"itemId": "Planks", "amount": 1}, {"itemId": "Hammer", "amount": 1}]
     },
 
-    "HomeTextiles": {
+    {
+        "id": "HomeTextiles",
         "name": "Home Textiles",
         "producerId": "FurnitureStore",
         "duration": 75,
-        "requirements": [{"item": "Textiles", "amount": 2}, {"item": "MeasuringTape", "amount": 1}]
+        "requirements": [{"itemId": "Textiles", "amount": 2}, {"itemId": "MeasuringTape", "amount": 1}]
     },
 
-    "Cupboard": {
+    {
+        "id": "Cupboard",
         "name": "Cupboard",
         "producerId": "FurnitureStore",
         "duration": 45,
-        "requirements": [{"item": "Glass", "amount": 2}, {"item": "Planks", "amount": 2}, {"item": "Paint", "amount": 1}]
+        "requirements": [{"itemId": "Glass", "amount": 2}, {"itemId": "Planks", "amount": 2}, {"itemId": "Paint", "amount": 1}]
     },
 
-    "Couch": {
+    {
+        "id": "Couch",
         "name": "Couch",
         "producerId": "FurnitureStore",
         "duration": 150,
-        "requirements": [{"item": "Textiles", "amount": 3}, {"item": "Glue", "amount": 1}, {"item": "Drill", "amount": 1}]
+        "requirements": [{"itemId": "Textiles", "amount": 3}, {"itemId": "Glue", "amount": 1}, {"itemId": "Drill", "amount": 1}]
     },
 
-    "Grass": {
+    {
+        "id": "Grass",
         "name": "Grass",
         "producerId": "GardeningSupplies",
         "duration": 30,
-        "requirements": [{"item": "Seeds", "amount": 1}, {"item": "Shovel", "amount": 1}]
+        "requirements": [{"itemId": "Seeds", "amount": 1}, {"itemId": "Shovel", "amount": 1}]
     },
 
-    "TreeSaplings": {
+    {
+        "id": "TreeSaplings",
         "name": "Tree Saplings",
         "producerId": "GardeningSupplies",
         "duration": 90,
-        "requirements": [{"item": "Seeds", "amount": 2}, {"item": "Shovel", "amount": 1}]
+        "requirements": [{"itemId": "Seeds", "amount": 2}, {"itemId": "Shovel", "amount": 1}]
     },
 
-    "GardenFurniture": {
+    {
+        "id": "GardenFurniture",
         "name": "Garden Furniture",
         "producerId": "GardeningSupplies",
         "duration": 135,
-        "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Textiles", "amount": 2}, {"item": "Planks", "amount": 2}]
+        "requirements": [{"itemId": "Plastic", "amount": 2}, {"itemId": "Textiles", "amount": 2}, {"itemId": "Planks", "amount": 2}]
     },
 
-    "FirePit": {
+    {
+        "id": "FirePit",
         "name": "Fire Pit",
         "producerId": "GardeningSupplies",
         "duration": 240,
-        "requirements": [{"item": "Bricks", "amount": 2}, {"item": "Cement", "amount": 2}, {"item": "Shovel", "amount": 1}]
+        "requirements": [{"itemId": "Bricks", "amount": 2}, {"itemId": "Cement", "amount": 2}, {"itemId": "Shovel", "amount": 1}]
     },
 
-    "LawnMower": {
+    {
+        "id": "LawnMower",
         "name": "Lawn Mower",
         "producerId": "GardeningSupplies",
         "duration": 120,
-        "requirements": [{"item": "Metal", "amount": 3}, {"item": "ElectronicComponents", "amount": 1}, {"item": "Paint", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 3}, {"itemId": "ElectronicComponents", "amount": 1}, {"itemId": "Paint", "amount": 1}]
     },
 
-    "GardenGnomes": {
+    {
+        "id": "GardenGnomes",
         "name": "Garden Gnomes",
         "producerId": "GardeningSupplies",
         "duration": 90,
-        "requirements": [{"item": "Cement", "amount": 2}, {"item": "Glue", "amount": 1}]
+        "requirements": [{"itemId": "Cement", "amount": 2}, {"itemId": "Glue", "amount": 1}]
     },
 
-    "Donuts": {
+    {
+        "id": "Donuts",
         "name": "Donuts",
         "producerId": "DonutShop",
         "duration": 45,
-        "requirements": [{"item": "SugarAndSpices", "amount": 1}, {"item": "FlourBag", "amount": 1}]
+        "requirements": [{"itemId": "SugarAndSpices", "amount": 1}, {"itemId": "FlourBag", "amount": 1}]
     },
 
-    "GreenSmoothie": {
+    {
+        "id": "GreenSmoothie",
         "name": "Green Smoothie",
         "producerId": "DonutShop",
         "duration": 30,
-        "requirements": [{"item": "Vegetables", "amount": 1}, {"item": "FruitAndBerries", "amount": 1}]
+        "requirements": [{"itemId": "Vegetables", "amount": 1}, {"itemId": "FruitAndBerries", "amount": 1}]
     },
 
-    "BreadRoll": {
+    {
+        "id": "BreadRoll",
         "name": "BreadRoll",
         "producerId": "DonutShop",
         "duration": 60,
-        "requirements": [{"item": "FlourBag", "amount": 2}, {"item": "Cream", "amount": 1}]
+        "requirements": [{"itemId": "FlourBag", "amount": 2}, {"itemId": "Cream", "amount": 1}]
     },
 
-    "CherryCheesecake": {
+    {
+        "id": "CherryCheesecake",
         "name": "Cherry Cheesecake",
         "producerId": "DonutShop",
         "duration": 90,
-        "requirements": [{"item": "FlourBag", "amount": 1}, {"item": "FruitAndBerries", "amount": 1}, {"item": "Cheese", "amount": 1}]
+        "requirements": [{"itemId": "FlourBag", "amount": 1}, {"itemId": "FruitAndBerries", "amount": 1}, {"itemId": "Cheese", "amount": 1}]
     },
 
-    "FrozenYogurt": {
+    {
+        "id": "FrozenYogurt",
         "name": "Frozen Yogurt",
         "producerId": "DonutShop",
         "duration": 240,
-        "requirements": [{"item": "SugarAndSpices", "amount": 1}, {"item": "FruitAndBerries", "amount": 1}, {"item": "Cream", "amount": 1}]
+        "requirements": [{"itemId": "SugarAndSpices", "amount": 1}, {"itemId": "FruitAndBerries", "amount": 1}, {"itemId": "Cream", "amount": 1}]
     },
 
-    "Coffee": {
+    {
+        "id": "Coffee",
         "name": "Coffee",
         "producerId": "DonutShop",
         "duration": 60,
-        "requirements": [{"item": "Seeds", "amount": 2}, {"item": "SugarAndSpices", "amount": 1}, {"item": "Cream", "amount": 1}]
+        "requirements": [{"itemId": "Seeds", "amount": 2}, {"itemId": "SugarAndSpices", "amount": 1}, {"itemId": "Cream", "amount": 1}]
     },
 
-    "Cap": {
+    {
+        "id": "Cap",
         "name": "Cap",
         "producerId": "FashionStore",
         "duration": 60,
-        "requirements": [{"item": "Textiles", "amount": 2}, {"item": "MeasuringTape", "amount": 1}]
+        "requirements": [{"itemId": "Textiles", "amount": 2}, {"itemId": "MeasuringTape", "amount": 1}]
     },
 
-    "Shoes": {
+    {
+        "id": "Shoes",
         "name": "Shoes",
         "producerId": "FashionStore",
         "duration": 75,
-        "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Textiles", "amount": 2}, {"item": "Glue", "amount": 1}]
+        "requirements": [{"itemId": "Plastic", "amount": 2}, {"itemId": "Textiles", "amount": 2}, {"itemId": "Glue", "amount": 1}]
     },
 
-    "Watch": {
+    {
+        "id": "Watch",
         "name": "Watch",
         "producerId": "FashionStore",
         "duration": 90,
-        "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Chemicals", "amount": 1}, {"item": "Glass", "amount": 1}]
+        "requirements": [{"itemId": "Plastic", "amount": 2}, {"itemId": "Chemicals", "amount": 1}, {"itemId": "Glass", "amount": 1}]
     },
 
-    "BusinessSuits": {
+    {
+        "id": "BusinessSuits",
         "name": "Business Suits",
         "producerId": "FashionStore",
         "duration": 210,
-        "requirements": [{"item": "Textiles", "amount": 3}, {"item": "Glue", "amount": 1}, {"item": "MeasuringTape", "amount": 1}]
+        "requirements": [{"itemId": "Textiles", "amount": 3}, {"itemId": "Glue", "amount": 1}, {"itemId": "MeasuringTape", "amount": 1}]
     },
 
-    "Backpack": {
+    {
+        "id": "Backpack",
         "name": "Backpack",
         "producerId": "FashionStore",
         "duration": 150,
-        "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Textiles", "amount": 2}, {"item": "MeasuringTape", "amount": 1}]
+        "requirements": [{"itemId": "Plastic", "amount": 2}, {"itemId": "Textiles", "amount": 2}, {"itemId": "MeasuringTape", "amount": 1}]
     },
 
-    "IceCreamSandwich": {
+    {
+        "id": "IceCreamSandwich",
         "name": "Ice Cream Sandwich",
         "producerId": "FastFoodRestaurant",
         "duration": 14,
-        "requirements": [{"item": "Cream", "amount": 1}, {"item": "BreadRoll", "amount": 1}]
+        "requirements": [{"itemId": "Cream", "amount": 1}, {"itemId": "BreadRoll", "amount": 1}]
     },
 
-    "Pizza": {
+    {
+        "id": "Pizza",
         "name": "Pizza",
         "producerId": "FastFoodRestaurant",
         "duration": 24,
-        "requirements": [{"item": "FlourBag", "amount": 1}, {"item": "Cheese", "amount": 1}, {"item": "Beef", "amount": 1}]
+        "requirements": [{"itemId": "FlourBag", "amount": 1}, {"itemId": "Cheese", "amount": 1}, {"itemId": "Beef", "amount": 1}]
     },
 
-    "Burgers": {
+    {
+        "id": "Burgers",
         "name": "Burgers",
         "producerId": "FastFoodRestaurant",
         "duration": 35,
-        "requirements": [{"item": "Beef", "amount": 1}, {"item": "BreadRoll", "amount": 1}, {"item": "BBQGrill", "amount": 1}]
+        "requirements": [{"itemId": "Beef", "amount": 1}, {"itemId": "BreadRoll", "amount": 1}, {"itemId": "BBQGrill", "amount": 1}]
     },
 
-    "CheeseFries": {
+    {
+        "id": "CheeseFries",
         "name": "Cheese Fries",
         "producerId": "FastFoodRestaurant",
         "duration": 20,
-        "requirements": [{"item": "Vegetables", "amount": 1}, {"item": "Cheese", "amount": 1}]
+        "requirements": [{"itemId": "Vegetables", "amount": 1}, {"itemId": "Cheese", "amount": 1}]
     },
 
-    "LemonadeBottle": {
+    {
+        "id": "LemonadeBottle",
         "name": "Lemonade Bottle",
         "producerId": "FastFoodRestaurant",
         "duration": 60,
-        "requirements": [{"item": "SugarAndSpices", "amount": 1}, {"item": "Glass", "amount": 1}, {"item": "FruitAndBerries", "amount": 1}]
+        "requirements": [{"itemId": "SugarAndSpices", "amount": 1}, {"itemId": "Glass", "amount": 1}, {"itemId": "FruitAndBerries", "amount": 1}]
     },
 
-    "Popcorn": {
+    {
+        "id": "Popcorn",
         "name": "Popcorn",
         "producerId": "FastFoodRestaurant",
         "duration": 30,
-        "requirements": [{"item": "Corn", "amount": 2}, {"item": "MicrowaveOven", "amount": 1}]
+        "requirements": [{"itemId": "Corn", "amount": 2}, {"itemId": "MicrowaveOven", "amount": 1}]
     },
 
-    "BBQGrill": {
+    {
+        "id": "BBQGrill",
         "name": "BBQ Grill",
         "producerId": "HomeAppliances",
         "duration": 165,
-        "requirements": [{"item": "Metal", "amount": 3}, {"item": "CookingUtensil", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 3}, {"itemId": "CookingUtensil", "amount": 1}]
     },
 
-    "Refrigerator": {
+    {
+        "id": "Refrigerator",
         "name": "Refrigerator",
         "producerId": "HomeAppliances",
         "duration": 210,
-        "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Chemicals", "amount": 2}, {"item": "ElectronicComponents", "amount": 2}]
+        "requirements": [{"itemId": "Plastic", "amount": 2}, {"itemId": "Chemicals", "amount": 2}, {"itemId": "ElectronicComponents", "amount": 2}]
     },
 
-    "LightingSystem": {
+    {
+        "id": "LightingSystem",
         "name": "Lighting System",
         "producerId": "HomeAppliances",
         "duration": 105,
-        "requirements": [{"item": "Chemicals", "amount": 1}, {"item": "Glass", "amount": 1}, {"item": "ElectronicComponents", "amount": 1}]
+        "requirements": [{"itemId": "Chemicals", "amount": 1}, {"itemId": "Glass", "amount": 1}, {"itemId": "ElectronicComponents", "amount": 1}]
     },
 
-    "TV": {
+    {
+        "id": "TV",
         "name": "TV",
         "producerId": "HomeAppliances",
         "duration": 150,
-        "requirements": [{"item": "Plastic", "amount": 2}, {"item": "Glass", "amount": 1}, {"item": "ElectronicComponents", "amount": 2}]
+        "requirements": [{"itemId": "Plastic", "amount": 2}, {"itemId": "Glass", "amount": 1}, {"itemId": "ElectronicComponents", "amount": 2}]
     },
 
-    "MicrowaveOven": {
+    {
+        "id": "MicrowaveOven",
         "name": "Microwave Oven",
         "producerId": "HomeAppliances",
         "duration": 120,
-        "requirements": [{"item": "Metal", "amount": 4}, {"item": "Glass", "amount": 1}, {"item": "ElectronicComponents", "amount": 1}]
+        "requirements": [{"itemId": "Metal", "amount": 4}, {"itemId": "Glass", "amount": 1}, {"itemId": "ElectronicComponents", "amount": 1}]
     }
 
-};
+];
 
-/* eslint-enable */
-
+/* eslint-enable no-unused-vars */

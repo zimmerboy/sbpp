@@ -3,6 +3,16 @@ $storage-list-card-color: #343838;
 $storage-list-card-bg-color: #faffff;
 $storage-list-card-border: solid 1px #ddeeee;
 
+$building-bg-color: #FFF1E6;
+$building-border-color: #FF9D4C;
+$building-border: solid 1px $building-border-color;
+
+$done-bg-color: #EAFDE4;
+$done-border-color: #47C61F;
+$done-border: solid 1px $done-border-color;
+
+$controls-border-radius: 2px;
+
 $todo-list-area-border-color: $storage-area-border;
 
 body {
@@ -57,6 +67,10 @@ p.name {
   border: $storage-area-border;
 }
 
+.producer {
+  margin-top: 2px;
+}
+
 .producer > p {
   margin-bottom: 0;
   margin-left: 2px;
@@ -66,12 +80,16 @@ p.name {
   padding-left: 2px;
   background-color: darken($storage-list-card-bg-color, 7);
 }
-.producer:first-of-type p {
-  margin-top: 0;
-}
+// .producer:first-of-type p {
+//   margin-top: 0;
+// }
 
 #shopping-list.area {
   border: $storage-area-border;
+}
+
+#shopping-list .card {
+  cursor: -webkit-grab; cursor: -moz-grab;
 }
 
 #todo-list .area {
@@ -109,16 +127,67 @@ div.card {
 
 .building {
   color: #FF9D4C;
-  background-color: #FFF1E6;
-  border: solid 1px #FF9D4C;
+  background-color: $building-bg-color;
+  border: $building-border;
 }
 
 .done {
   color: #47C61F;
-  background-color: #EAFDE4;
-  border: solid 1px #47C61F;
+  background-color: $done-bg-color;
+  border: $done-border;
 }
 
+.sortable-placeholder {
+  border: solid 1px red;
+  background-color: yellow;
+  background-image: url('../static/images/triangle.png');
+  background-position: left;
+  background-repeat: no-repeat;
+}
+
+.building-controls, .amount-controls {
+
+  float: left;
+  // font-size: 12px;
+
+  img {
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+  }
+
+  img.minus {
+    margin-right: 2px;
+  }
+
+}
+
+.building-controls {
+  background-color: lighten($building-bg-color, 10);
+  border: solid 1px lighten($building-border-color, 25);
+  border-radius: $controls-border-radius;
+  margin-right: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+}
+
+.amount-controls {
+  background-color: lighten($done-bg-color, 10);
+  border: solid 1px lighten($done-border-color, 45);
+  border-radius: $controls-border-radius;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
 
 /*
 .card {
